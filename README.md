@@ -57,6 +57,8 @@ Train the model with:
 python backend\src\train_model.py
 ```
 
+Because the training script reads every CSV in `backend/data/raw/`, any curated hard-negative benign CSV placed there is included automatically.
+
 This will:
 
 - load the training data
@@ -107,6 +109,7 @@ The project no longer trains on the toy `sample_urls.csv` file by default.
 The current model-ready dataset is:
 
 - `backend/data/raw/internet_urls.csv`
+- `backend/data/raw/official_hard_negatives.csv`
 
 The source manifest is stored in:
 
@@ -124,6 +127,12 @@ As of April 20, 2026, the current training file contains:
 
 - 857 benign URLs
 - 300 malicious URLs
+
+There is also a dedicated hard-negative benign file:
+
+- `backend/data/raw/official_hard_negatives.csv`
+
+This file contains official, legitimate URLs from sign-in, security, verification, account recovery, and support pages on trusted domains such as Google, GitHub, Microsoft, Apple, and PayPal. These are intentionally "phishy-looking" but safe, which makes them useful for reducing false positives.
 
 Benign URLs come from legitimate, traceable sources:
 
@@ -160,6 +169,32 @@ Any CSV dropped into `backend/data/updates/` should match the expected schema:
 
 - `url`
 - `label`
+
+## Evaluate False Positives
+
+Use the evaluation script to measure the current model on labeled CSVs with a focus on false positives:
+
+```powershell
+python backend\src\evaluate_model.py
+```
+
+By default, this evaluates:
+
+- `backend/data/raw/official_hard_negatives.csv`
+
+You can also evaluate any labeled CSV:
+
+```powershell
+python backend\src\evaluate_model.py --csv backend\data\raw\internet_urls.csv
+```
+
+The script reports:
+
+- classification metrics
+- confusion matrix
+- false-positive rate on benign URLs
+- threshold sweep for benign false positives and malicious recall
+- highest-confidence false positives
 
 ## Logs and Artifacts
 
