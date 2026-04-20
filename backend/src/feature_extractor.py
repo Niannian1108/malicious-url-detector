@@ -25,7 +25,6 @@ Dependencies:
 
 import math
 import re
-import string
 from urllib.parse import urlparse
 
 import tldextract
@@ -56,6 +55,10 @@ _IPV4_RE = re.compile(
     r"^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}"
     r"(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$"
 )
+
+# Keep suffix parsing fully local so feature extraction does not hang on
+# network/cache refreshes during training or API requests.
+_TLD_EXTRACTOR = tldextract.TLDExtract(suffix_list_urls=None)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -174,7 +177,7 @@ def extract_features(url: str) -> dict:
 
     # ── 2. Parse the URL into components ─────────────────────────────────────
     parsed = urlparse(url)          # standard-library parser
-    extracted = tldextract.extract(url)  # domain / TLD-aware parser
+    extracted = _TLD_EXTRACTOR(url)  # domain / TLD-aware parser
 
     # Individual components (may be empty strings if absent).
     scheme = parsed.scheme          # "https", "http", …

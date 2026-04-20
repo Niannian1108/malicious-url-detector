@@ -1,4 +1,25 @@
 const API_URL = "http://127.0.0.1:8000/predict";
+const BLOCK_CONFIDENCE_THRESHOLD = 0.95;
+
+// Temporary allowlist while the model and dataset are still immature.
+const TRUSTED_DOMAINS = [
+  "google.com",
+  "github.com",
+  "microsoft.com",
+  "apple.com",
+];
+
+function isTrustedDomain(targetUrl) {
+  try {
+    const { hostname } = new URL(targetUrl);
+    return TRUSTED_DOMAINS.some((domain) =>
+      hostname === domain || hostname.endsWith(`.${domain}`)
+    );
+  } catch (error) {
+    console.warn("[Malicious URL Detector] Could not parse URL for allowlist check:", error);
+    return false;
+  }
+}
 
 // Listen for main frame navigations before they fully commit
 chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
@@ -15,6 +36,11 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     targetUrl.includes("127.0.0.1") ||
     targetUrl.includes("localhost")
   ) {
+    return;
+  }
+
+  if (isTrustedDomain(targetUrl)) {
+    console.log(`[Malicious URL Detector] Skipping trusted domain: ${targetUrl}`);
     return;
   }
 
@@ -37,8 +63,9 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     const result = await response.json();
     console.log("Backend response:", result);
 
-    // prediction = 1 means malicious
-    if (result.prediction === 1) {
+    // Only hard-block very high-confidence detections while the model is
+    // still being tuned to reduce false positives.
+    if (result.prediction === 1 && result.confidence >= BLOCK_CONFIDENCE_THRESHOLD) {
       console.warn(`[Malicious URL Detector] Blocked URL: ${targetUrl} (Confidence: ${result.confidence})`);
 
       // Redirect the tab immediately to a safe page like about:blank
@@ -56,6 +83,11 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
           console.error("Notification error:", chrome.runtime.lastError.message);
         }
       });
+    } else if (result.prediction === 1) {
+      console.warn(
+        `[Malicious URL Detector] Suspicious URL allowed due to low confidence: ${targetUrl} ` +
+        `(Confidence: ${result.confidence})`
+      );
     } else {
       console.log(`[Malicious URL Detector] URL is safe: ${targetUrl}`);
     }

@@ -275,6 +275,7 @@ def train_and_evaluate(
     y_test:  pd.Series,
     n_estimators: int = 200,
     random_state: int = 42,
+    n_jobs: int = 1,
 ) -> RandomForestClassifier:
     """
     Train a RandomForestClassifier and print evaluation metrics.
@@ -298,13 +299,13 @@ def train_and_evaluate(
         The fitted model object.
     """
     print(f"[5/5] Training RandomForestClassifier "
-          f"(n_estimators={n_estimators}) …")
+          f"(n_estimators={n_estimators}, n_jobs={n_jobs}) …")
 
     # Initialise the classifier.
     clf = RandomForestClassifier(
         n_estimators=n_estimators,
         random_state=random_state,
-        n_jobs=-1,           # use all available CPU cores
+        n_jobs=n_jobs,       # single-process is more reliable on some Windows setups
         class_weight="balanced",  # handle any mild class imbalance
     )
 

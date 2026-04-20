@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-04-20",
+  "benign_sources": [
+    {
+      "name": "python_docs",
+      "kind": "official_sitemap",
+      "url": "https://docs.python.org/sitemap.xml",
+      "rows_added": 7
+    },
+    {
+      "name": "mdn",
+      "kind": "official_sitemap",
+      "url": "https://developer.mozilla.org/sitemap.xml",
+      "rows_added": 0
+    },
+    {
+      "name": "microsoft_ai",
+      "kind": "official_sitemap",
+      "url": "https://www.microsoft.com/sitemaps/ai/sitemapindex.xml",
+      "rows_added": 150
+    },
+    {
+      "name": "microsoft_security",
+      "kind": "official_sitemap",
+      "url": "https://www.microsoft.com/sitemaps/security/sitemapindex.xml",
+      "rows_added": 150
+    },
+    {
+      "name": "apple_newsroom",
+      "kind": "official_sitemap",
+      "url": "https://www.apple.com/newsroom/sitemap.xml",
+      "rows_added": 150
+    },
+    {
+      "name": "apple_retail",
+      "kind": "official_sitemap",
+      "url": "https://www.apple.com/retail/sitemap/sitemap.xml",
+      "rows_added": 100
+    },
+    {
+      "name": "tranco_top_sites",
+      "kind": "top_domains",
+      "url": "https://tranco-list.eu/",
+      "rows_added": 300
+    }
+  ],
+  "malicious_sources": [
+    {
+      "name": "openphish_community_feed",
+      "kind": "official_feed",
+      "url": "https://openphish.com/feed.txt",
+      "rows_added": 300
+    }
+  ]
+}

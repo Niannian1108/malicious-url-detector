@@ -96,6 +96,11 @@ artefact = load_model(MODEL_PATH)
 clf      = artefact["model"]       # trained RandomForestClassifier
 FEATURES = artefact["features"]    # ordered list of feature column names
 
+# Some Windows environments fail when sklearn tries to spawn worker pools for
+# prediction. Force single-process inference for reliability.
+if hasattr(clf, "n_jobs"):
+    clf.n_jobs = 1
+
 
 # ---------------------------------------------------------------------------
 # Lifespan: runs setup code when the server starts (and teardown on stop)
