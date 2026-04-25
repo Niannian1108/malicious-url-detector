@@ -1,5 +1,6 @@
 const API_URL = "http://127.0.0.1:8000/predict";
 const BLOCK_CONFIDENCE_THRESHOLD = 0.95;
+const PROCEED_OVERRIDE_TTL_MS = 60_000;
 
 // Temporary allowlist while the model and dataset are still immature.
 const TRUSTED_DOMAINS = [
@@ -21,6 +22,67 @@ function isTrustedDomain(targetUrl) {
   }
 }
 
+const proceedOverrides = new Map();
+
+function buildBlockedPageUrl(targetUrl, confidence) {
+  const blockedPage = new URL(chrome.runtime.getURL("blocked.html"));
+  blockedPage.searchParams.set("url", targetUrl);
+  blockedPage.searchParams.set("confidence", String(confidence));
+  return blockedPage.toString();
+}
+
+function allowProceedOnce(tabId, targetUrl) {
+  proceedOverrides.set(tabId, {
+    url: targetUrl,
+    expiresAt: Date.now() + PROCEED_OVERRIDE_TTL_MS,
+  });
+}
+
+function consumeProceedOverride(tabId, targetUrl) {
+  const override = proceedOverrides.get(tabId);
+  if (!override) {
+    return false;
+  }
+
+  const isExpired = Date.now() > override.expiresAt;
+  const matchesTarget = override.url === targetUrl;
+
+  if (isExpired || !matchesTarget) {
+    proceedOverrides.delete(tabId);
+    return false;
+  }
+
+  proceedOverrides.delete(tabId);
+  return true;
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === "proceed-once") {
+    const tabId = sender.tab?.id;
+    const targetUrl = message.url;
+
+    if (typeof tabId !== "number" || !targetUrl) {
+      sendResponse({ ok: false });
+      return false;
+    }
+
+    allowProceedOnce(tabId, targetUrl);
+    chrome.tabs.update(tabId, { url: targetUrl }, () => {
+      if (chrome.runtime.lastError) {
+        console.error("[Malicious URL Detector] Could not continue to blocked URL:", chrome.runtime.lastError.message);
+        sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+        return;
+      }
+
+      sendResponse({ ok: true });
+    });
+
+    return true;
+  }
+
+  return false;
+});
+
 // Listen for main frame navigations before they fully commit
 chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   // Only process the main frame (the main webpage), not embedded iframes
@@ -36,6 +98,11 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     targetUrl.includes("127.0.0.1") ||
     targetUrl.includes("localhost")
   ) {
+    return;
+  }
+
+  if (consumeProceedOverride(details.tabId, targetUrl)) {
+    console.log(`[Malicious URL Detector] Proceed-once override used for: ${targetUrl}`);
     return;
   }
 
@@ -68,8 +135,10 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     if (result.prediction === 1 && result.confidence >= BLOCK_CONFIDENCE_THRESHOLD) {
       console.warn(`[Malicious URL Detector] Blocked URL: ${targetUrl} (Confidence: ${result.confidence})`);
 
-      // Redirect the tab immediately to a safe page like about:blank
-      chrome.tabs.update(details.tabId, { url: "about:blank" });
+      // Redirect the tab to an extension-controlled warning page.
+      chrome.tabs.update(details.tabId, {
+        url: buildBlockedPageUrl(targetUrl, result.confidence),
+      });
 
       // Create a system notification to inform the user
       chrome.notifications.create({

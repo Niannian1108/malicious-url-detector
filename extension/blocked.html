@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malicious URL Detector Warning</title>
+    <style>
+        :root {
+            --bg: #f6f1e8;
+            --panel: rgba(255, 250, 240, 0.94);
+            --ink: #1f1a17;
+            --muted: #5f564f;
+            --danger: #b33f2f;
+            --danger-dark: #8e2f21;
+            --safe: #efe4d1;
+            --border: rgba(77, 55, 37, 0.18);
+            --shadow: 0 20px 60px rgba(70, 42, 20, 0.16);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Georgia, "Times New Roman", serif;
+            background:
+                radial-gradient(circle at top left, rgba(214, 153, 84, 0.28), transparent 34%),
+                radial-gradient(circle at bottom right, rgba(179, 63, 47, 0.18), transparent 28%),
+                linear-gradient(160deg, #f8f2e9 0%, #f3eadf 48%, #eadcc7 100%);
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+
+        .card {
+            width: min(760px, 100%);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .hero {
+            padding: 28px 28px 16px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0));
+        }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            font-size: 13px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--danger-dark);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(32px, 4vw, 48px);
+            line-height: 1.02;
+        }
+
+        .subhead {
+            margin: 14px 0 0;
+            font-size: 18px;
+            line-height: 1.5;
+            color: var(--muted);
+            max-width: 60ch;
+        }
+
+        .content {
+            padding: 22px 28px 28px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .meta-card {
+            background: var(--safe);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 16px;
+        }
+
+        .meta-label {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .meta-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .url-box {
+            padding: 16px 18px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.65);
+        }
+
+        .url-box p {
+            margin: 0 0 8px;
+            font-size: 13px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .url {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .notes {
+            margin: 0;
+            padding-left: 22px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 8px;
+        }
+
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 14px 20px;
+            font: inherit;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 120ms ease, opacity 120ms ease, box-shadow 120ms ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+            transform: none;
+        }
+
+        .primary {
+            background: var(--danger);
+            color: white;
+            box-shadow: 0 10px 24px rgba(179, 63, 47, 0.24);
+        }
+
+        .secondary {
+            background: white;
+            color: var(--ink);
+            border: 1px solid var(--border);
+        }
+
+        .status {
+            min-height: 20px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <section class="hero">
+            <p class="eyebrow">Navigation paused</p>
+            <h1>This site looks risky.</h1>
+            <p class="subhead">
+                The extension stopped this page because the local phishing detector scored it as high risk.
+                You can go back or continue once if you trust the destination.
+            </p>
+        </section>
+
+        <section class="content">
+            <div class="meta">
+                <div class="meta-card">
+                    <span class="meta-label">Confidence</span>
+                    <span class="meta-value" id="confidenceValue">--</span>
+                </div>
+                <div class="meta-card">
+                    <span class="meta-label">Decision</span>
+                    <span class="meta-value">Blocked</span>
+                </div>
+            </div>
+
+            <div class="url-box">
+                <p>Blocked destination</p>
+                <div class="url" id="blockedUrl">No URL provided.</div>
+            </div>
+
+            <ul class="notes">
+                <li>High confidence blocks are stopped before the page fully loads.</li>
+                <li>Proceeding is a one-time override for this tab.</li>
+                <li>If this is a trusted service, the model may still need more benign training data.</li>
+            </ul>
+
+            <div class="actions">
+                <button class="secondary" id="goBackButton" type="button">Go Back</button>
+                <button class="primary" id="proceedButton" type="button">Proceed Anyway</button>
+            </div>
+
+            <p class="status" id="statusText"></p>
+        </section>
+    </main>
+
+    <script src="blocked.js"></script>
+</body>
+</html>

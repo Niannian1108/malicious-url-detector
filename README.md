@@ -26,7 +26,7 @@ malicious-url-detector/
 1. The browser extension listens for top-level page navigations.
 2. It sends the target URL to the local FastAPI backend at `http://127.0.0.1:8000/predict`.
 3. The backend extracts numerical URL features and runs a saved `RandomForestClassifier`.
-4. If the URL is predicted as malicious, the extension redirects the tab to `about:blank` and shows a notification.
+4. If the URL is predicted as malicious with high confidence, the extension sends the tab to a built-in warning page and shows a notification.
 5. The backend logs prediction events to SQLite.
 
 ## Requirements
@@ -102,6 +102,17 @@ uvicorn backend.src.api_server:app --reload
 
 Then load the unpacked extension and browse normally.
 
+## Warning Page Behavior
+
+High-confidence blocks no longer send users straight to `about:blank`.
+
+Instead, the extension opens a built-in warning page that shows:
+
+- the blocked URL
+- the model confidence score
+- a `Go Back` action
+- a `Proceed Anyway` action that allows a one-time override for that tab
+
 ## Data Currently Included
 
 The project no longer trains on the toy `sample_urls.csv` file by default.
@@ -123,16 +134,16 @@ The downloaded source files are stored in:
 
 ### Current Dataset Shape
 
-As of April 20, 2026, the current training file contains:
+As of April 25, 2026, the combined training set contains:
 
-- 857 benign URLs
+- 899 benign URLs
 - 300 malicious URLs
 
 There is also a dedicated hard-negative benign file:
 
 - `backend/data/raw/official_hard_negatives.csv`
 
-This file contains official, legitimate URLs from sign-in, security, verification, account recovery, and support pages on trusted domains such as Google, GitHub, Microsoft, Apple, and PayPal. These are intentionally "phishy-looking" but safe, which makes them useful for reducing false positives.
+This file contains official, legitimate URLs from sign-in, security, verification, account recovery, and support pages on trusted domains such as Google, GitHub, Microsoft, Apple, PayPal, Dropbox, Adobe, AWS, Atlassian, and Amazon Pay. These are intentionally "phishy-looking" but safe, which makes them useful for reducing false positives.
 
 Benign URLs come from legitimate, traceable sources:
 
@@ -153,6 +164,7 @@ This is more realistic than the earlier dataset because the benign side now cont
 - OpenPhish provides a public phishing feed that is useful for near-real-time malicious URLs.
 - Tranco provides a research-oriented ranking of popular domains and is a practical benign-domain source.
 - Official sitemap feeds from trusted sites provide real benign page URLs with more realistic paths and structures.
+- Official help, sign-in, support, and account-management pages from trusted vendors are used as hard-negative benign examples.
 - PhishTank is also a strong source, but anonymous bulk downloads may be rate-limited unless you use an application key.
 
 ## Auto-Updating Data
@@ -206,12 +218,12 @@ The script reports:
 - The model is lexical only; it does not inspect page content, redirects, certificates, reputation feeds, or screenshots.
 - Even with improved data, lexical features alone can still produce false positives on legitimate sites.
 - The extension depends on the local backend being up.
-- The extension currently hard-blocks by redirecting to `about:blank`, which may be too aggressive during false positives.
+- The warning page is safer than `about:blank`, but the model can still be wrong and users may need to override false positives.
 - Full URLs are stored in the local SQLite log, which has privacy implications.
 
 ## Next Recommended Improvements
 
 - Add tests for feature extraction, training, and API behavior
-- Add a warning/interstitial page instead of redirecting straight to `about:blank`
 - Track dataset versions and refresh dates more formally
 - Add a scripted data refresh flow for OpenPhish, Tranco, and optionally PhishTank
+- Add richer, non-lexical signals such as reputation, redirects, and brand-similarity checks
