@@ -2,7 +2,7 @@
 
 Malicious URL Detector is a local phishing and suspicious-URL detection prototype made of:
 
-- A Python backend that extracts lexical URL features and classifies URLs with a trained Random Forest model.
+- A Python backend that extracts lexical, trust-aware, and brand-mismatch URL features and classifies URLs with a trained Random Forest model.
 - A Chrome extension that checks visited URLs against the local backend and blocks ones predicted to be malicious.
 
 ## Project Structure
@@ -62,7 +62,7 @@ Because the training script reads every CSV in `backend/data/raw/`, any curated 
 This will:
 
 - load the training data
-- extract URL features
+- extract URL features including lexical, trust, and brand/domain consistency signals
 - split the data into train/test sets
 - train a Random Forest classifier
 - print evaluation metrics
@@ -208,6 +208,17 @@ The script reports:
 - threshold sweep for benign false positives and malicious recall
 - highest-confidence false positives
 
+## Current Detection Strategy
+
+The current feature extractor now combines:
+
+- lexical structure signals such as URL length, dots, digits, hyphens, entropy, query size, and path depth
+- suspicious structure signals such as punycode, risky TLDs, executable/script paths, and IP-host usage
+- trust-aware signals such as known trusted domains
+- brand/domain consistency signals that distinguish legitimate brand-owned URLs from lookalike phishing domains
+
+The Chrome extension currently uses a block threshold of `0.90`, chosen because it improved malicious recall while still keeping the curated official hard-negative benign set at `0%` false positives during evaluation.
+
 ## Logs and Artifacts
 
 - Model file: `backend/models/model_v1.joblib`
@@ -215,8 +226,8 @@ The script reports:
 
 ## Known Limitations
 
-- The model is lexical only; it does not inspect page content, redirects, certificates, reputation feeds, or screenshots.
-- Even with improved data, lexical features alone can still produce false positives on legitimate sites.
+- The model is still URL-centric; it does not inspect page content, live redirects, certificates, reputation feeds, or screenshots.
+- Even with trust-aware and brand/domain features, the model can still produce false positives or miss attacks that look benign lexically.
 - The extension depends on the local backend being up.
 - The warning page is safer than `about:blank`, but the model can still be wrong and users may need to override false positives.
 - Full URLs are stored in the local SQLite log, which has privacy implications.
@@ -226,4 +237,4 @@ The script reports:
 - Add tests for feature extraction, training, and API behavior
 - Track dataset versions and refresh dates more formally
 - Add a scripted data refresh flow for OpenPhish, Tranco, and optionally PhishTank
-- Add richer, non-lexical signals such as reputation, redirects, and brand-similarity checks
+- Add richer non-lexical signals such as reputation, redirects, certificate cues, and HTML-content heuristics

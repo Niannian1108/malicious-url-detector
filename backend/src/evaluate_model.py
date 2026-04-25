@@ -86,9 +86,17 @@ def evaluate_csv(csv_path: str, clf, feature_columns: list[str], threshold: floa
     print(f"Malicious rows: {(results['label'] == 1).sum()}")
 
     print("\nDefault classifier output:")
-    print(classification_report(y, pred_default, target_names=["Benign (0)", "Malicious (1)"], zero_division=0))
+    print(
+        classification_report(
+            y,
+            pred_default,
+            labels=[0, 1],
+            target_names=["Benign (0)", "Malicious (1)"],
+            zero_division=0,
+        )
+    )
     print("Confusion matrix [rows=true, cols=pred]:")
-    print(confusion_matrix(y, pred_default))
+    print(confusion_matrix(y, pred_default, labels=[0, 1]))
 
     if y.nunique() > 1:
         auc = roc_auc_score(y, prob_malicious)

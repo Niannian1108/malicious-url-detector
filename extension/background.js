@@ -1,5 +1,5 @@
 const API_URL = "http://127.0.0.1:8000/predict";
-const BLOCK_CONFIDENCE_THRESHOLD = 0.95;
+const BLOCK_CONFIDENCE_THRESHOLD = 0.90;
 const PROCEED_OVERRIDE_TTL_MS = 60_000;
 
 // Temporary allowlist while the model and dataset are still immature.
@@ -130,8 +130,8 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     const result = await response.json();
     console.log("Backend response:", result);
 
-    // Only hard-block very high-confidence detections while the model is
-    // still being tuned to reduce false positives.
+    // 0.90 currently keeps the hard-negative benign set at 0% false positives
+    // while restoring much better malicious recall than 0.95.
     if (result.prediction === 1 && result.confidence >= BLOCK_CONFIDENCE_THRESHOLD) {
       console.warn(`[Malicious URL Detector] Blocked URL: ${targetUrl} (Confidence: ${result.confidence})`);
 

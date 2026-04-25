@@ -1,26 +1,15 @@
 """
 feature_extractor.py
-────────────────────────────────────────────────────────────────────────────────
-Extracts numerical / boolean features from a raw URL string so that a machine-
-learning model can decide whether the URL is malicious or benign.
+--------------------------------------------------------------------------------
+Extract numerical and boolean features from a URL so a machine-learning model
+can decide whether the URL is malicious or benign.
 
-Features returned (all in a flat dict):
-  url_length          – total character count of the URL
-  domain_length       – character count of the registered domain only
-  path_length         – character count of the URL path
-  num_dots            – number of '.' characters in the full URL
-  num_digits          – number of 0-9 digits in the full URL
-  num_special_chars   – count of selected special characters (-, _, ?, =, &, @, %, #, !)
-  has_https           – 1 if the scheme is https, 0 otherwise
-  entropy             – Shannon entropy of the URL string (higher ⟹ more random-looking)
-  has_ip_address      – 1 if the host looks like a raw IPv4 address, 0 otherwise
-  subdomain_count     – number of subdomain labels (e.g. "a.b.example.com" ⟹ 2)
-  path_depth          – number of '/' segments in the path (e.g. "/a/b/c" ⟹ 3)
-  has_suspicious_keyword – 1 if any known phishing keyword is present in the URL
-
-Dependencies:
-  pip install tldextract   (already listed in requirements.txt)
-  urllib.parse             (Python standard library)
+This version goes beyond simple lexical counts by adding:
+  - hostname/query structure features
+  - suspicious TLD and punycode checks
+  - basic script/executable path detection
+  - trusted-domain recognition
+  - brand/domain mismatch detection
 """
 
 import math
@@ -30,15 +19,10 @@ from urllib.parse import urlparse
 import tldextract
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Constants
-# ──────────────────────────────────────────────────────────────────────────────
-
-# Special characters that are commonly abused in phishing / malicious URLs.
+# Common punctuation often abused in phishing and malicious URLs.
 SPECIAL_CHARS = set("-_?=&@%#!")
 
-# Keywords frequently found in phishing URLs that try to impersonate
-# legitimate services (banks, payment processors, social platforms, etc.).
+# General phishing-oriented keywords.
 SUSPICIOUS_KEYWORDS = [
     "login", "signin", "sign-in", "logon",
     "secure", "security", "verify", "verification",
@@ -47,47 +31,53 @@ SUSPICIOUS_KEYWORDS = [
     "password", "credential", "wallet",
     "free", "lucky", "winner", "prize",
     "support", "helpdesk", "service",
-    "webscr", "cmd=",                   # PayPal phishing patterns
+    "webscr", "cmd=",
 ]
 
-# Simple IPv4 pattern: four groups of digits separated by dots.
+# Common extensions used in phishing landing pages or downloadable payloads.
+EXECUTABLE_EXTENSIONS = (
+    ".php", ".asp", ".aspx", ".jsp", ".js", ".exe", ".dll", ".scr", ".zip"
+)
+
+# A small hand-curated set of higher-risk TLDs seen frequently in abuse.
+SUSPICIOUS_TLDS = {
+    "biz", "cc", "cf", "click", "country", "download", "gq", "info", "kim",
+    "loan", "ml", "ga", "ru", "support", "tk", "top", "work", "xyz", "zip",
+}
+
+# Brand tokens and domains that are legitimately owned by those brands.
+BRAND_DOMAIN_MAP = {
+    "google": ("google.com", "googleapis.com", "googleusercontent.com", "withgoogle.com"),
+    "github": ("github.com", "githubusercontent.com", "githubassets.com"),
+    "microsoft": ("microsoft.com", "live.com", "office.com", "microsoftonline.com", "windows.com"),
+    "apple": ("apple.com", "icloud.com"),
+    "paypal": ("paypal.com",),
+    "dropbox": ("dropbox.com", "dropboxapi.com"),
+    "adobe": ("adobe.com",),
+    "amazon": ("amazon.com", "amazonpay.com"),
+    "aws": ("amazon.com", "aws.amazon.com"),
+    "atlassian": ("atlassian.com",),
+}
+
 _IPV4_RE = re.compile(
     r"^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}"
     r"(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$"
 )
 
-# Keep suffix parsing fully local so feature extraction does not hang on
-# network/cache refreshes during training or API requests.
+# Keep suffix parsing local so requests do not hang on external cache refreshes.
 _TLD_EXTRACTOR = tldextract.TLDExtract(suffix_list_urls=None)
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Helper functions
-# ──────────────────────────────────────────────────────────────────────────────
-
 def _shannon_entropy(text: str) -> float:
-    """
-    Calculate the Shannon entropy of a string.
-
-    Entropy measures how unpredictable / random a string is.
-    Malicious URLs often have high entropy because they contain
-    randomly generated subdomains or paths (e.g. base64 payloads).
-
-    Formula:  H = -Σ p(c) * log2(p(c))   for each unique character c.
-
-    Returns 0.0 for an empty string.
-    """
+    """Calculate Shannon entropy for a string."""
     if not text:
         return 0.0
 
-    # Count how often each character appears.
     char_counts: dict[str, int] = {}
     for ch in text:
         char_counts[ch] = char_counts.get(ch, 0) + 1
 
     total = len(text)
-
-    # Apply the Shannon entropy formula.
     entropy = 0.0
     for count in char_counts.values():
         probability = count / total
@@ -97,18 +87,19 @@ def _shannon_entropy(text: str) -> float:
 
 
 def _count_special_chars(text: str) -> int:
-    """Return how many characters in *text* belong to SPECIAL_CHARS."""
+    """Return the count of special characters from SPECIAL_CHARS."""
     return sum(1 for ch in text if ch in SPECIAL_CHARS)
 
 
-def _has_suspicious_keyword(url_lower: str) -> int:
-    """
-    Return 1 if *url_lower* contains at least one keyword from
-    SUSPICIOUS_KEYWORDS, otherwise 0.
+def _count_query_params(query: str) -> int:
+    """Return the number of query-string parameters."""
+    if not query:
+        return 0
+    return len([part for part in query.split("&") if part])
 
-    The URL is pre-lowercased by the caller so the comparison is
-    case-insensitive without calling .lower() repeatedly.
-    """
+
+def _has_suspicious_keyword(url_lower: str) -> int:
+    """Return 1 if any phishing-oriented keyword appears in the URL."""
     for keyword in SUSPICIOUS_KEYWORDS:
         if keyword in url_lower:
             return 1
@@ -116,137 +107,141 @@ def _has_suspicious_keyword(url_lower: str) -> int:
 
 
 def _is_ip_address(host: str) -> int:
-    """Return 1 if *host* is a bare IPv4 address, 0 otherwise."""
+    """Return 1 if host is a bare IPv4 address."""
     return 1 if _IPV4_RE.match(host) else 0
 
 
 def _count_subdomains(extracted) -> int:
-    """
-    Count the number of subdomain labels.
-
-    tldextract splits a host into:
-      subdomain  –  everything left of the registered domain
-      domain     –  the registered domain name (e.g. "google")
-      suffix     –  the public suffix / TLD (e.g. "com")
-
-    Example: "mail.accounts.google.com"
-      subdomain = "mail.accounts"  →  2 labels
-    """
-    subdomain = extracted.subdomain  # e.g. "mail.accounts" or ""
-    if not subdomain:
+    """Return how many labels appear in the subdomain portion."""
+    if not extracted.subdomain:
         return 0
-    return len(subdomain.split("."))
+    return len(extracted.subdomain.split("."))
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Public API
-# ──────────────────────────────────────────────────────────────────────────────
+def _has_punycode(host: str) -> int:
+    """Return 1 if the hostname contains punycode labels."""
+    return 1 if "xn--" in host.lower() else 0
+
+
+def _has_executable_path(path: str) -> int:
+    """Return 1 if the path ends with a commonly abused extension."""
+    return 1 if path.lower().endswith(EXECUTABLE_EXTENSIONS) else 0
+
+
+def _has_suspicious_tld(suffix: str) -> int:
+    """Return 1 if the public suffix is in a risky hand-curated list."""
+    return 1 if suffix.lower() in SUSPICIOUS_TLDS else 0
+
+
+def _hostname_matches_domain(host: str, candidate_domain: str) -> bool:
+    """Return True when host is the same as candidate_domain or its subdomain."""
+    host = host.lower()
+    candidate_domain = candidate_domain.lower()
+    return host == candidate_domain or host.endswith(f".{candidate_domain}")
+
+
+def _is_known_trusted_domain(host: str) -> int:
+    """Return 1 if the hostname belongs to one of the monitored trusted vendors."""
+    for approved_domains in BRAND_DOMAIN_MAP.values():
+        if any(_hostname_matches_domain(host, domain) for domain in approved_domains):
+            return 1
+    return 0
+
+
+def _find_brand_tokens(text: str) -> set[str]:
+    """Return the monitored brand tokens that appear in text."""
+    text = text.lower()
+    return {brand for brand in BRAND_DOMAIN_MAP if brand in text}
+
+
+def _brand_signals(url_lower: str, host: str) -> tuple[int, int]:
+    """
+    Return:
+      - has_brand_keyword: a monitored brand appears somewhere in the URL
+      - has_brand_mismatch: the brand appears but the hostname is not brand-owned
+    """
+    brand_tokens = _find_brand_tokens(url_lower)
+    if not brand_tokens:
+        return 0, 0
+
+    for brand in brand_tokens:
+        approved_domains = BRAND_DOMAIN_MAP[brand]
+        if not any(_hostname_matches_domain(host, domain) for domain in approved_domains):
+            return 1, 1
+
+    return 1, 0
+
 
 def extract_features(url: str) -> dict:
-    """
-    Extract a dictionary of numerical / boolean features from a URL.
-
-    Parameters
-    ----------
-    url : str
-        The raw URL string (e.g. "https://example.com/path?q=1").
-
-    Returns
-    -------
-    dict
-        A flat dictionary where every value is a number (int or float).
-        Ready to be converted into a single-row DataFrame or feature vector.
-
-    Example
-    -------
-    >>> features = extract_features("http://login-secure.bankofamerica.verify.xyz/update")
-    >>> features["has_https"]
-    0
-    >>> features["has_suspicious_keyword"]
-    1
-    """
-
-    # ── 1. Normalise the URL ──────────────────────────────────────────────────
-    # Strip surrounding whitespace; ensure there is a scheme so that
-    # urlparse can correctly identify the host and path.
+    """Extract a flat numeric feature dictionary from a raw URL string."""
     url = url.strip()
     if not url.startswith(("http://", "https://", "ftp://")):
-        url = "http://" + url  # add a default scheme for parsing only
+        url = "http://" + url
 
-    url_lower = url.lower()  # reuse for keyword search (avoids repeated .lower())
+    url_lower = url.lower()
+    parsed = urlparse(url)
+    extracted = _TLD_EXTRACTOR(url)
 
-    # ── 2. Parse the URL into components ─────────────────────────────────────
-    parsed = urlparse(url)          # standard-library parser
-    extracted = _TLD_EXTRACTOR(url)  # domain / TLD-aware parser
+    scheme = parsed.scheme
+    host = parsed.netloc
+    path = parsed.path
+    query = parsed.query
+    bare_host = host.split(":")[0]
 
-    # Individual components (may be empty strings if absent).
-    scheme = parsed.scheme          # "https", "http", …
-    host   = parsed.netloc          # "sub.example.com:8080"
-    path   = parsed.path            # "/login/update"
-    query  = parsed.query           # "user=foo&token=bar"
-
-    # Registered domain only (e.g. "google" from "mail.google.com").
-    domain = extracted.domain       # without subdomain or TLD
-    suffix = extracted.suffix       # TLD, e.g. "co.uk"
-
-    # Full domain string for length measurement (domain + suffix).
+    domain = extracted.domain
+    suffix = extracted.suffix
     full_domain = f"{domain}.{suffix}" if suffix else domain
 
-    # ── 3. Compute each feature ───────────────────────────────────────────────
-
-    # --- Basic length features ---
-    url_length    = len(url)
+    url_length = len(url)
+    host_length = len(bare_host)
     domain_length = len(full_domain)
-    path_length   = len(path)
+    path_length = len(path)
+    query_length = len(query)
 
-    # --- Character-count features ---
-    num_dots         = url.count(".")
-    num_digits       = sum(1 for ch in url if ch.isdigit())
+    num_dots = url.count(".")
+    num_digits = sum(1 for ch in url if ch.isdigit())
+    num_hyphens = url.count("-")
     num_special_chars = _count_special_chars(url)
+    num_query_params = _count_query_params(query)
 
-    # --- Security scheme ---
     has_https = 1 if scheme == "https" else 0
-
-    # --- Entropy (randomness of the URL string) ---
     entropy = _shannon_entropy(url)
-
-    # --- IP address in host field (phishing trick) ---
-    # Remove port number before checking (e.g. "192.168.1.1:8080" → "192.168.1.1").
-    bare_host = host.split(":")[0]
     has_ip_address = _is_ip_address(bare_host)
+    has_punycode = _has_punycode(bare_host)
+    has_executable_path = _has_executable_path(path)
+    has_suspicious_tld = _has_suspicious_tld(suffix)
 
-    # --- Subdomain depth ---
     subdomain_count = _count_subdomains(extracted)
-
-    # --- Path depth (number of '/' segments) ---
-    # Split on '/' and filter out empty strings produced by leading '/'.
     path_depth = len([seg for seg in path.split("/") if seg])
-
-    # --- Suspicious keyword ---
+    is_known_trusted_domain = _is_known_trusted_domain(bare_host)
+    has_brand_keyword, has_brand_mismatch = _brand_signals(url_lower, bare_host)
     has_suspicious_keyword = _has_suspicious_keyword(url_lower)
 
-    # ── 4. Bundle and return ─────────────────────────────────────────────────
-    features = {
-        "url_length":              url_length,
-        "domain_length":           domain_length,
-        "path_length":             path_length,
-        "num_dots":                num_dots,
-        "num_digits":              num_digits,
-        "num_special_chars":       num_special_chars,
-        "has_https":               has_https,
-        "entropy":                 entropy,
-        "has_ip_address":          has_ip_address,
-        "subdomain_count":         subdomain_count,
-        "path_depth":              path_depth,
-        "has_suspicious_keyword":  has_suspicious_keyword,
+    return {
+        "url_length": url_length,
+        "host_length": host_length,
+        "domain_length": domain_length,
+        "path_length": path_length,
+        "query_length": query_length,
+        "num_dots": num_dots,
+        "num_digits": num_digits,
+        "num_hyphens": num_hyphens,
+        "num_special_chars": num_special_chars,
+        "num_query_params": num_query_params,
+        "has_https": has_https,
+        "entropy": entropy,
+        "has_ip_address": has_ip_address,
+        "has_punycode": has_punycode,
+        "has_executable_path": has_executable_path,
+        "has_suspicious_tld": has_suspicious_tld,
+        "subdomain_count": subdomain_count,
+        "path_depth": path_depth,
+        "is_known_trusted_domain": is_known_trusted_domain,
+        "has_brand_keyword": has_brand_keyword,
+        "has_brand_mismatch": has_brand_mismatch,
+        "has_suspicious_keyword": has_suspicious_keyword,
     }
 
-    return features
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Quick manual test  (run:  python feature_extractor.py)
-# ──────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     test_urls = [
