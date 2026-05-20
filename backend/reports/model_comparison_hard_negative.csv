@@ -1,0 +1,5 @@
+model,benign_rows,false_positive_count_default,false_positive_rate_default,false_positive_count_threshold_0_90,false_positive_rate_threshold_0_90,max_benign_confidence
+Gradient Boosting,42,0,0.0,0,0.0,0.0045
+Random Forest,42,0,0.0,0,0.0,0.135
+Logistic Regression,42,0,0.0,0,0.0,0.146
+SVM (RBF),42,1,0.0238,0,0.0,0.571

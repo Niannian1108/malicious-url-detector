@@ -2,7 +2,7 @@
 
 Malicious URL Detector is a local phishing and suspicious-URL detection prototype made of:
 
-- A Python backend that extracts lexical, trust-aware, and brand-mismatch URL features and classifies URLs with a trained Random Forest model.
+- A Python backend that extracts lexical, trust-aware, and brand-mismatch URL features and classifies URLs with a trained Gradient Boosting model.
 - A Chrome extension that checks visited URLs against the local backend and blocks ones predicted to be malicious.
 
 ## Project Structure
@@ -25,7 +25,7 @@ malicious-url-detector/
 
 1. The browser extension listens for top-level page navigations.
 2. It sends the target URL to the local FastAPI backend at `http://127.0.0.1:8000/predict`.
-3. The backend extracts numerical URL features and runs a saved `RandomForestClassifier`.
+3. The backend extracts numerical URL features and runs a saved machine-learning model.
 4. If the URL is predicted as malicious with high confidence, the extension sends the tab to a built-in warning page and shows a notification.
 5. The backend logs prediction events to SQLite.
 
@@ -64,8 +64,9 @@ This will:
 - load the training data
 - extract URL features including lexical, trust, and brand/domain consistency signals
 - split the data into train/test sets
-- train a Random Forest classifier
-- print evaluation metrics
+- train the selected deployed model
+- print evaluation metrics on a hold-out split
+- refit the deployed model on the full dataset
 - save the model to `backend/models/model_v1.joblib`
 
 ## Run the Backend API
@@ -208,6 +209,23 @@ The script reports:
 - threshold sweep for benign false positives and malicious recall
 - highest-confidence false positives
 
+## Compare Models
+
+Use the comparison script to train and compare the main baseline models for the FYP 2 report:
+
+```powershell
+python backend\src\model_comparison.py
+```
+
+This writes report-ready artifacts to:
+
+- `backend/reports/model_comparison_main.csv`
+- `backend/reports/model_comparison_hard_negative.csv`
+- `backend/reports/deployed_model_threshold_analysis.csv`
+- `backend/reports/model_confusion_matrices.json`
+- `backend/reports/model_comparison_summary.md`
+- `backend/reports/architecture_refinement.md`
+
 ## Current Detection Strategy
 
 The current feature extractor now combines:
@@ -217,7 +235,24 @@ The current feature extractor now combines:
 - trust-aware signals such as known trusted domains
 - brand/domain consistency signals that distinguish legitimate brand-owned URLs from lookalike phishing domains
 
-The Chrome extension currently uses a block threshold of `0.90`, chosen because it improved malicious recall while still keeping the curated official hard-negative benign set at `0%` false positives during evaluation.
+The current deployed model is **Gradient Boosting**, selected after model comparison because it outperformed the other tested baselines while keeping hard-negative benign false positives at `0%`.
+
+The Chrome extension currently uses a block threshold of `0.90`, chosen because it preserved `0%` hard-negative benign false positives while maintaining strong malicious recall during threshold analysis.
+
+## Run Tests
+
+Run the lightweight regression tests with:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+The test suite covers:
+
+- feature extraction behavior
+- API response stability
+- official benign URLs that look suspicious
+- malicious brand-mismatch and risky-structure URLs
 
 ## Logs and Artifacts
 

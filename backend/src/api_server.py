@@ -58,7 +58,7 @@ def load_model(model_path: str) -> dict:
 
     The artefact is a dict saved by train_model.py:
         {
-            "model":    <RandomForestClassifier>,
+            "model":    <trained sklearn estimator>,
             "features": ["url_length", "domain_length", ...]
         }
 
@@ -93,8 +93,9 @@ def load_model(model_path: str) -> dict:
 # Any error here is intentional -- you want the server to crash loudly
 # rather than serve silently wrong predictions.
 artefact = load_model(MODEL_PATH)
-clf      = artefact["model"]       # trained RandomForestClassifier
-FEATURES = artefact["features"]    # ordered list of feature column names
+clf        = artefact["model"]                   # trained sklearn estimator
+FEATURES   = artefact["features"]                # ordered list of feature column names
+MODEL_NAME = artefact.get("model_name", type(clf).__name__)
 
 # Some Windows environments fail when sklearn tries to spawn worker pools for
 # prediction. Force single-process inference for reliability.
@@ -173,6 +174,7 @@ def health_check():
     return {
         "status": "ok",
         "message": "Malicious URL Detector API is running.",
+        "deployed_model": MODEL_NAME,
         "model_features": len(FEATURES),
     }
 
@@ -184,10 +186,10 @@ def predict(request: PredictRequest):
 
     Steps:
         1. Validate that the URL field is not empty.
-        2. Extract the 12 numerical features from the URL.
+        2. Extract the current numerical features from the URL.
         3. Build a one-row DataFrame whose columns match the training columns
            exactly (order matters for sklearn).
-        4. Run the Random Forest classifier.
+        4. Run the deployed classifier.
         5. Return the hard prediction (0/1) and the malicious probability.
 
     Parameters
