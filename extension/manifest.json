@@ -16,6 +16,18 @@
         "service_worker": "background.js",
         "type": "module"
     },
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": [
+                "dom_inspector.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
     "action": {
         "default_popup": "popup.html",
         "default_title": "Malicious URL Detector"

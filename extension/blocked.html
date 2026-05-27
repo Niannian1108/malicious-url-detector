@@ -186,8 +186,8 @@
     <main class="card">
         <section class="hero">
             <p class="eyebrow">Navigation paused</p>
-            <h1>This site looks risky.</h1>
-            <p class="subhead">
+            <h1 id="headline">This site looks risky.</h1>
+            <p class="subhead" id="subhead">
                 The extension stopped this page because the local phishing detector scored it as high risk.
                 You can go back or continue once if you trust the destination.
             </p>
@@ -201,7 +201,7 @@
                 </div>
                 <div class="meta-card">
                     <span class="meta-label">Decision</span>
-                    <span class="meta-value">Blocked</span>
+                    <span class="meta-value" id="decisionValue">Blocked</span>
                 </div>
             </div>
 
@@ -210,7 +210,7 @@
                 <div class="url" id="blockedUrl">No URL provided.</div>
             </div>
 
-            <ul class="notes">
+            <ul class="notes" id="reasonsList">
                 <li>High confidence blocks are stopped before the page fully loads.</li>
                 <li>Proceeding is a one-time override for this tab.</li>
                 <li>If this is a trusted service, the model may still need more benign training data.</li>

@@ -18,9 +18,9 @@ memory for fast predictions.
 
 import os
 import sys
+from typing import List
 
 import joblib
-import numpy as np
 import pandas as pd
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -128,10 +128,10 @@ async def lifespan(app):
 app = FastAPI(
     title="Malicious URL Detector API",
     description=(
-        "Classifies a URL as benign (0) or malicious (1) using a "
-        "Random Forest model trained on URL-structure features."
+        "Classifies a URL as benign (0) or malicious (1) using the "
+        "currently deployed model trained on URL-structure features."
     ),
-    version="1.0.0",
+    version="1.1.0",
     lifespan=lifespan,   # register the startup/shutdown handler
 )
 
@@ -150,15 +150,118 @@ app.add_middleware(
 # Request / Response schemas (Pydantic validates them automatically)
 # ---------------------------------------------------------------------------
 
+class DomSignals(BaseModel):
+    """Optional lightweight page signals collected by the extension after load."""
+    form_count: int = 0
+    password_field_count: int = 0
+    hidden_iframe_count: int = 0
+    external_script_count: int = 0
+    suspicious_text_hit_count: int = 0
+    page_brand_mismatch: int = 0
+
+
 class PredictRequest(BaseModel):
     """Body expected by POST /predict."""
-    url: str  # the raw URL string to classify
+    url: str
+    dom_signals: DomSignals | None = None
 
 
 class PredictResponse(BaseModel):
     """JSON body returned by POST /predict."""
     prediction: int    # 0 = benign, 1 = malicious
     confidence: float  # probability that the URL belongs to class 1 (malicious)
+    risk_level: str    # low, medium, or high
+    reasons: List[str]
+
+
+def _normalise_dom_signals(dom_signals: DomSignals | None) -> dict[str, int]:
+    """Convert optional DOM signals to a plain dict for risk heuristics."""
+    if dom_signals is None:
+        return {
+            "form_count": 0,
+            "password_field_count": 0,
+            "hidden_iframe_count": 0,
+            "external_script_count": 0,
+            "suspicious_text_hit_count": 0,
+            "page_brand_mismatch": 0,
+        }
+    return dom_signals.model_dump()
+
+
+def _adjust_confidence(base_confidence: float, url_features: dict, dom_signals: dict[str, int]) -> float:
+    """Raise confidence slightly when lightweight page signals reinforce suspicion."""
+    adjustment = 0.0
+
+    if dom_signals["password_field_count"] and url_features.get("has_suspicious_keyword"):
+        adjustment += 0.08
+    if dom_signals["hidden_iframe_count"]:
+        adjustment += 0.10
+    if dom_signals["page_brand_mismatch"]:
+        adjustment += 0.12
+    if dom_signals["external_script_count"] >= 8:
+        adjustment += 0.04
+    if dom_signals["suspicious_text_hit_count"] >= 3:
+        adjustment += 0.05
+
+    return round(min(1.0, base_confidence + adjustment), 4)
+
+
+def _determine_risk_level(prediction: int, effective_confidence: float, url_features: dict, dom_signals: dict[str, int]) -> str:
+    """Translate model output and heuristics into a user-facing severity band."""
+    if prediction == 1 and effective_confidence >= 0.90:
+        return "high"
+    if prediction == 1 and effective_confidence >= 0.70:
+        return "medium"
+
+    if (
+        url_features.get("has_brand_mismatch")
+        and dom_signals["password_field_count"]
+        and dom_signals["page_brand_mismatch"]
+    ):
+        return "high"
+
+    if (
+        url_features.get("has_suspicious_keyword")
+        and (
+            dom_signals["password_field_count"]
+            or dom_signals["hidden_iframe_count"]
+            or dom_signals["suspicious_text_hit_count"] >= 4
+        )
+    ):
+        return "medium"
+
+    return "low"
+
+
+def _build_reasons(url_features: dict, dom_signals: dict[str, int], effective_confidence: float) -> List[str]:
+    """Generate short explanation bullets for warning and demo purposes."""
+    reasons: list[str] = []
+
+    if url_features.get("has_brand_mismatch"):
+        reasons.append("The URL mentions a trusted brand on a non-brand domain.")
+    if url_features.get("has_suspicious_tld"):
+        reasons.append("The domain uses a higher-risk top-level domain.")
+    if url_features.get("has_ip_address"):
+        reasons.append("The URL uses a direct IP address instead of a normal domain.")
+    if url_features.get("has_executable_path"):
+        reasons.append("The path ends with a script or executable-style extension.")
+    if dom_signals["password_field_count"]:
+        reasons.append("The page contains password fields often seen on credential-harvesting pages.")
+    if dom_signals["hidden_iframe_count"]:
+        reasons.append("The page includes hidden iframes, which can indicate deceptive behavior.")
+    if dom_signals["page_brand_mismatch"]:
+        reasons.append("The page content suggests a brand/domain mismatch.")
+    if dom_signals["suspicious_text_hit_count"] >= 3:
+        reasons.append("The page text contains multiple security- or account-themed bait terms.")
+    if effective_confidence >= 0.90:
+        reasons.append("The combined risk score is high enough to justify blocking.")
+    elif effective_confidence >= 0.70:
+        reasons.append("The combined risk score is elevated and worth caution.")
+
+    if not reasons:
+        reasons.append("The URL did not trigger any strong risk indicators.")
+
+    return reasons[:4]
 
 
 # ---------------------------------------------------------------------------
@@ -201,7 +304,7 @@ def predict(request: PredictRequest):
     -------
     PredictResponse
         "prediction" : 0 (benign) or 1 (malicious)
-        "confidence" : float in [0, 1] -- probability of being malicious
+        "confidence" : float in [0, 1] -- combined probability/risk score
     """
 
     # -- Step 1: Validate input ----------------------------------------------
@@ -232,13 +335,17 @@ def predict(request: PredictRequest):
     # -- Step 4: Predict -----------------------------------------------------
     prediction  = int(clf.predict(feature_df)[0])              # 0 or 1
     # predict_proba returns [[prob_class0, prob_class1]]
-    confidence  = float(clf.predict_proba(feature_df)[0][1])   # P(malicious)
-    confidence  = round(confidence, 4)
+    model_confidence = float(clf.predict_proba(feature_df)[0][1])   # P(malicious)
+    model_confidence = round(model_confidence, 4)
+    dom_signals = _normalise_dom_signals(request.dom_signals)
+    effective_confidence = _adjust_confidence(model_confidence, raw_features, dom_signals)
+    risk_level = _determine_risk_level(prediction, effective_confidence, raw_features, dom_signals)
+    reasons = _build_reasons(raw_features, dom_signals, effective_confidence)
 
     # -- Step 5: Log the event to the database --------------------------------
     # This is a best-effort write; we do not fail the request if logging fails.
     try:
-        log_event(url=url, prediction=prediction, confidence=confidence)
+        log_event(url=url, prediction=prediction, confidence=effective_confidence)
     except Exception as log_exc:
         # Print a warning but still return the prediction to the caller.
         print(f"[DB] WARNING: Could not log event: {log_exc}")
@@ -246,7 +353,9 @@ def predict(request: PredictRequest):
     # -- Step 6: Return result -----------------------------------------------
     return PredictResponse(
         prediction=prediction,
-        confidence=confidence,
+        confidence=effective_confidence,
+        risk_level=risk_level,
+        reasons=reasons,
     )
 
 

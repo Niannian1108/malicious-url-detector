@@ -3,7 +3,7 @@
 Malicious URL Detector is a local phishing and suspicious-URL detection prototype made of:
 
 - A Python backend that extracts lexical, trust-aware, and brand-mismatch URL features and classifies URLs with a trained Gradient Boosting model.
-- A Chrome extension that checks visited URLs against the local backend and blocks ones predicted to be malicious.
+- A Chrome extension that checks visited URLs against the local backend, applies lightweight page-signal heuristics, and warns or blocks suspicious destinations.
 
 ## Project Structure
 
@@ -26,8 +26,10 @@ malicious-url-detector/
 1. The browser extension listens for top-level page navigations.
 2. It sends the target URL to the local FastAPI backend at `http://127.0.0.1:8000/predict`.
 3. The backend extracts numerical URL features and runs a saved machine-learning model.
-4. If the URL is predicted as malicious with high confidence, the extension sends the tab to a built-in warning page and shows a notification.
-5. The backend logs prediction events to SQLite.
+4. After the page loads, the extension can send lightweight DOM signals such as password fields, hidden iframes, external scripts, suspicious page text, and simple brand/domain mismatch cues.
+5. The backend returns a prediction, confidence score, risk level, and short explanation reasons.
+6. If the destination is high risk, the extension sends the tab to a built-in warning page. Medium-risk results trigger a caution notification. Low-risk results are allowed.
+7. The backend logs prediction events to SQLite.
 
 ## Requirements
 
@@ -103,7 +105,7 @@ uvicorn backend.src.api_server:app --reload
 
 Then load the unpacked extension and browse normally.
 
-## Warning Page Behavior
+## Warning And Caution Behavior
 
 High-confidence blocks no longer send users straight to `about:blank`.
 
@@ -111,8 +113,16 @@ Instead, the extension opens a built-in warning page that shows:
 
 - the blocked URL
 - the model confidence score
+- the current risk level
+- short explanation reasons
 - a `Go Back` action
 - a `Proceed Anyway` action that allows a one-time override for that tab
+
+The current extension flow uses three severity bands:
+
+- `low` risk: allow
+- `medium` risk: show a caution notification
+- `high` risk: open the warning page and block by default
 
 ## Data Currently Included
 
@@ -228,16 +238,22 @@ This writes report-ready artifacts to:
 
 ## Current Detection Strategy
 
-The current feature extractor now combines:
+The current detector now combines:
 
 - lexical structure signals such as URL length, dots, digits, hyphens, entropy, query size, and path depth
 - suspicious structure signals such as punycode, risky TLDs, executable/script paths, and IP-host usage
 - trust-aware signals such as known trusted domains
 - brand/domain consistency signals that distinguish legitimate brand-owned URLs from lookalike phishing domains
+- lightweight page heuristics such as password fields, hidden iframes, suspicious page text, external script count, and simple brand/domain mismatch cues collected by the extension after load
 
 The current deployed model is **Gradient Boosting**, selected after model comparison because it outperformed the other tested baselines while keeping hard-negative benign false positives at `0%`.
 
-The Chrome extension currently uses a block threshold of `0.90`, chosen because it preserved `0%` hard-negative benign false positives while maintaining strong malicious recall during threshold analysis.
+The Chrome extension currently uses:
+
+- a `high` risk threshold of `0.90` for blocking
+- a `medium` risk threshold of `0.70` for caution warnings
+
+These thresholds were chosen to preserve `0%` hard-negative benign false positives while maintaining strong malicious recall during threshold analysis.
 
 ## Run Tests
 
@@ -251,6 +267,7 @@ The test suite covers:
 
 - feature extraction behavior
 - API response stability
+- risk-level response behavior
 - official benign URLs that look suspicious
 - malicious brand-mismatch and risky-structure URLs
 
@@ -261,7 +278,7 @@ The test suite covers:
 
 ## Known Limitations
 
-- The model is still URL-centric; it does not inspect page content, live redirects, certificates, reputation feeds, or screenshots.
+- The system is still mostly URL-centric. It now adds lightweight DOM heuristics, but it does not perform deep page-content classification, live redirect tracing, certificate analysis, reputation lookups, or screenshot-based inspection.
 - Even with trust-aware and brand/domain features, the model can still produce false positives or miss attacks that look benign lexically.
 - The extension depends on the local backend being up.
 - The warning page is safer than `about:blank`, but the model can still be wrong and users may need to override false positives.
@@ -272,4 +289,5 @@ The test suite covers:
 - Add tests for feature extraction, training, and API behavior
 - Track dataset versions and refresh dates more formally
 - Add a scripted data refresh flow for OpenPhish, Tranco, and optionally PhishTank
-- Add richer non-lexical signals such as reputation, redirects, certificate cues, and HTML-content heuristics
+- Expand the lightweight page-signal layer and validate it against more real-world phishing and hard-negative benign pages
+- Add richer non-lexical signals such as reputation, redirects, and certificate cues

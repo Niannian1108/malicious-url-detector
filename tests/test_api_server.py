@@ -37,10 +37,13 @@ class ApiServerTests(unittest.TestCase):
         self.assertIn(payload.prediction, [0, 1])
         self.assertGreaterEqual(payload.confidence, 0.0)
         self.assertLessEqual(payload.confidence, 1.0)
+        self.assertIn(payload.risk_level, ["low", "medium", "high"])
+        self.assertIsInstance(payload.reasons, list)
 
     def test_official_paypal_signin_is_not_block_threshold_risk(self):
         payload = api_server.predict(api_server.PredictRequest(url="https://www.paypal.com/us/signin"))
         self.assertLess(payload.confidence, 0.90)
+        self.assertNotEqual(payload.risk_level, "high")
 
     def test_brand_mismatch_phishing_url_scores_as_malicious(self):
         payload = api_server.predict(
@@ -50,6 +53,24 @@ class ApiServerTests(unittest.TestCase):
         )
         self.assertEqual(payload.prediction, 1)
         self.assertGreaterEqual(payload.confidence, 0.80)
+        self.assertIn(payload.risk_level, ["medium", "high"])
+
+    def test_dom_signals_can_raise_severity(self):
+        url = "http://login-secure.paypal.verify-account.xyz/cmd=_login-submit"
+        base_payload = api_server.predict(api_server.PredictRequest(url=url))
+        dom_payload = api_server.predict(
+            api_server.PredictRequest(
+                url=url,
+                dom_signals=api_server.DomSignals(
+                    password_field_count=1,
+                    hidden_iframe_count=1,
+                    suspicious_text_hit_count=4,
+                    page_brand_mismatch=1,
+                ),
+            )
+        )
+        self.assertGreaterEqual(dom_payload.confidence, base_payload.confidence)
+        self.assertEqual(dom_payload.risk_level, "high")
 
 
 if __name__ == "__main__":

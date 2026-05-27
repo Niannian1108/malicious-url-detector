@@ -1,5 +1,6 @@
 const API_URL = "http://127.0.0.1:8000/predict";
 const BLOCK_CONFIDENCE_THRESHOLD = 0.90;
+const CAUTION_CONFIDENCE_THRESHOLD = 0.70;
 const PROCEED_OVERRIDE_TTL_MS = 60_000;
 
 // Temporary allowlist while the model and dataset are still immature.
@@ -23,11 +24,16 @@ function isTrustedDomain(targetUrl) {
 }
 
 const proceedOverrides = new Map();
+const tabRiskState = new Map();
 
-function buildBlockedPageUrl(targetUrl, confidence) {
+function buildBlockedPageUrl(targetUrl, confidence, riskLevel, reasons = []) {
   const blockedPage = new URL(chrome.runtime.getURL("blocked.html"));
   blockedPage.searchParams.set("url", targetUrl);
   blockedPage.searchParams.set("confidence", String(confidence));
+  blockedPage.searchParams.set("risk", riskLevel);
+  for (const reason of reasons.slice(0, 4)) {
+    blockedPage.searchParams.append("reason", reason);
+  }
   return blockedPage.toString();
 }
 
@@ -56,6 +62,98 @@ function consumeProceedOverride(tabId, targetUrl) {
   return true;
 }
 
+function rememberTabRisk(tabId, targetUrl, riskLevel) {
+  tabRiskState.set(tabId, { url: targetUrl, riskLevel });
+}
+
+function shouldSkipUrl(targetUrl) {
+  return (
+    targetUrl.startsWith("chrome://") ||
+    targetUrl.startsWith("chrome-extension://") ||
+    targetUrl.startsWith("about:") ||
+    targetUrl.includes("127.0.0.1") ||
+    targetUrl.includes("localhost")
+  );
+}
+
+async function classifyUrl(targetUrl, domSignals = null) {
+  const payload = { url: targetUrl };
+  if (domSignals) {
+    payload.dom_signals = domSignals;
+  }
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+function showNotification(title, message) {
+  chrome.notifications.create({
+    type: "basic",
+    iconUrl: chrome.runtime.getURL("icons/icon128.png"),
+    title,
+    message,
+    priority: 2
+  }, () => {
+    if (chrome.runtime.lastError) {
+      console.error("Notification error:", chrome.runtime.lastError.message);
+    }
+  });
+}
+
+function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
+  const confidencePct = Math.round((result.confidence || 0) * 100);
+
+  if (result.risk_level === "high") {
+    console.warn(
+      `[Malicious URL Detector] High-risk ${source} result for ${targetUrl} ` +
+      `(Confidence: ${result.confidence})`
+    );
+
+    rememberTabRisk(tabId, targetUrl, "high");
+    chrome.tabs.update(tabId, {
+      url: buildBlockedPageUrl(targetUrl, result.confidence, result.risk_level, result.reasons),
+    });
+
+    showNotification(
+      "Danger: Malicious Website Blocked!",
+      `Blocked as high risk (${confidencePct}% confidence).`
+    );
+    return;
+  }
+
+  if (result.risk_level === "medium") {
+    const previous = tabRiskState.get(tabId);
+    if (previous?.url === targetUrl && previous.riskLevel === "medium") {
+      return;
+    }
+
+    console.warn(
+      `[Malicious URL Detector] Medium-risk ${source} result for ${targetUrl} ` +
+      `(Confidence: ${result.confidence})`
+    );
+    rememberTabRisk(tabId, targetUrl, "medium");
+    showNotification(
+      "Caution: Suspicious Website",
+      `This page looks suspicious (${confidencePct}% confidence). Review it carefully.`
+    );
+    return;
+  }
+
+  rememberTabRisk(tabId, targetUrl, "low");
+  console.log(`[Malicious URL Detector] URL is safe: ${targetUrl}`);
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === "proceed-once") {
     const tabId = sender.tab?.id;
@@ -80,6 +178,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message?.type === "analyze-page-dom") {
+    const tabId = sender.tab?.id;
+    const targetUrl = message.url;
+
+    if (typeof tabId !== "number" || !targetUrl || shouldSkipUrl(targetUrl) || isTrustedDomain(targetUrl)) {
+      sendResponse({ ok: false, skipped: true });
+      return false;
+    }
+
+    classifyUrl(targetUrl, message.domSignals || null)
+      .then((result) => {
+        handleRiskResult(tabId, targetUrl, result, "dom-assisted");
+        sendResponse({ ok: true, risk_level: result.risk_level });
+      })
+      .catch((error) => {
+        console.error("[Malicious URL Detector] DOM-assisted analysis failed:", error);
+        sendResponse({ ok: false, error: error.message });
+      });
+
+    return true;
+  }
+
   return false;
 });
 
@@ -91,13 +211,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   const targetUrl = details.url;
 
   // Ignore internal Chrome pages, extension pages, and local IP to prevent loops
-  if (
-    targetUrl.startsWith("chrome://") ||
-    targetUrl.startsWith("chrome-extension://") ||
-    targetUrl.startsWith("about:") ||
-    targetUrl.includes("127.0.0.1") ||
-    targetUrl.includes("localhost")
-  ) {
+  if (shouldSkipUrl(targetUrl)) {
     return;
   }
 
@@ -112,54 +226,18 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   }
 
   try {
-    // Send the URL to our local backend for classification
     console.log("Sending request to backend:", targetUrl);
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ url: targetUrl }),
-    });
-
-    if (!response.ok) {
-      console.warn(`[Malicious URL Detector] API error: ${response.status} ${response.statusText}`);
-      return; // Fail open (allow navigation) if server throws error
-    }
-
-    const result = await response.json();
+    const result = await classifyUrl(targetUrl);
     console.log("Backend response:", result);
 
-    // 0.90 currently keeps the hard-negative benign set at 0% false positives
-    // while restoring much better malicious recall than 0.95.
+    // Keep the existing thresholds aligned with the backend severity bands.
     if (result.prediction === 1 && result.confidence >= BLOCK_CONFIDENCE_THRESHOLD) {
-      console.warn(`[Malicious URL Detector] Blocked URL: ${targetUrl} (Confidence: ${result.confidence})`);
-
-      // Redirect the tab to an extension-controlled warning page.
-      chrome.tabs.update(details.tabId, {
-        url: buildBlockedPageUrl(targetUrl, result.confidence),
-      });
-
-      // Create a system notification to inform the user
-      chrome.notifications.create({
-        type: "basic",
-        iconUrl: chrome.runtime.getURL("icons/icon128.png"),
-        title: "Danger: Malicious Website Blocked!",
-        message: `We stopped you from visiting a dangerous site.\nConfidence: ${result.confidence}`,
-        priority: 2
-      }, () => {
-        if (chrome.runtime.lastError) {
-          console.error("Notification error:", chrome.runtime.lastError.message);
-        }
-      });
-    } else if (result.prediction === 1) {
-      console.warn(
-        `[Malicious URL Detector] Suspicious URL allowed due to low confidence: ${targetUrl} ` +
-        `(Confidence: ${result.confidence})`
-      );
-    } else {
-      console.log(`[Malicious URL Detector] URL is safe: ${targetUrl}`);
+      result.risk_level = "high";
+    } else if (result.prediction === 1 && result.confidence >= CAUTION_CONFIDENCE_THRESHOLD) {
+      result.risk_level = "medium";
     }
+
+    handleRiskResult(details.tabId, targetUrl, result);
 
   } catch (error) {
     // This catches network errors (e.g., backend server is not running)
