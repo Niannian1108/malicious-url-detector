@@ -36,6 +36,6 @@
         "extension_pages": "script-src 'self'; object-src 'self'; connect-src http://127.0.0.1:8000"
     },
     "icons": {
-        "128": "icons/icon128.png"
+        "128": "icons/logo.png"
     }
 }

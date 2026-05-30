@@ -100,7 +100,7 @@ async function classifyUrl(targetUrl, domSignals = null) {
 function showNotification(title, message) {
   chrome.notifications.create({
     type: "basic",
-    iconUrl: chrome.runtime.getURL("icons/icon128.png"),
+    iconUrl: chrome.runtime.getURL("icons/logo.png"),
     title,
     message,
     priority: 2
