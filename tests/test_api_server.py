@@ -18,8 +18,25 @@ class ApiServerTests(unittest.TestCase):
     def setUp(self):
         self.log_patch = patch.object(api_server, "log_event", autospec=True)
         self.log_patch.start()
+        self.reputation_patch = patch.object(
+            api_server,
+            "check_reputation",
+            autospec=True,
+            return_value={
+                "enabled": False,
+                "source": "disabled",
+                "verdict": "unavailable",
+                "malicious_count": 0,
+                "suspicious_count": 0,
+                "harmless_count": 0,
+                "undetected_count": 0,
+                "error": None,
+            },
+        )
+        self.reputation_patch.start()
 
     def tearDown(self):
+        self.reputation_patch.stop()
         self.log_patch.stop()
 
     def test_health_check_reports_feature_count(self):
@@ -42,6 +59,16 @@ class ApiServerTests(unittest.TestCase):
 
     def test_official_paypal_signin_is_not_block_threshold_risk(self):
         payload = api_server.predict(api_server.PredictRequest(url="https://www.paypal.com/us/signin"))
+        self.assertLess(payload.confidence, 0.90)
+        self.assertNotEqual(payload.risk_level, "high")
+
+    def test_official_youtube_watch_url_is_not_blocked(self):
+        payload = api_server.predict(
+            api_server.PredictRequest(
+                url="https://www.youtube.com/watch?v=XkvZkBDjOI4&feature=youtu.be"
+            )
+        )
+        self.assertEqual(payload.prediction, 0)
         self.assertLess(payload.confidence, 0.90)
         self.assertNotEqual(payload.risk_level, "high")
 
@@ -71,6 +98,81 @@ class ApiServerTests(unittest.TestCase):
         )
         self.assertGreaterEqual(dom_payload.confidence, base_payload.confidence)
         self.assertEqual(dom_payload.risk_level, "high")
+
+    def test_hidden_iframe_alone_does_not_create_high_risk(self):
+        risk_level = api_server._determine_risk_level(
+            prediction=1,
+            model_confidence=0.96,
+            effective_confidence=0.96,
+            url_features={
+                "has_brand_mismatch": 0,
+                "has_suspicious_tld": 0,
+                "has_ip_address": 0,
+                "has_executable_path": 0,
+                "has_punycode": 0,
+                "has_suspicious_keyword": 0,
+            },
+            dom_signals={
+                "form_count": 0,
+                "password_field_count": 0,
+                "hidden_iframe_count": 3,
+                "external_script_count": 4,
+                "suspicious_text_hit_count": 0,
+                "page_brand_mismatch": 0,
+            },
+            reputation={"verdict": "unavailable"},
+        )
+        self.assertEqual(risk_level, "medium")
+
+    def test_clean_reputation_downgrades_weak_local_signal(self):
+        risk_level = api_server._determine_risk_level(
+            prediction=1,
+            model_confidence=0.97,
+            effective_confidence=0.97,
+            url_features={
+                "has_brand_mismatch": 0,
+                "has_suspicious_tld": 0,
+                "has_ip_address": 0,
+                "has_executable_path": 0,
+                "has_punycode": 0,
+                "has_suspicious_keyword": 0,
+            },
+            dom_signals={
+                "form_count": 0,
+                "password_field_count": 0,
+                "hidden_iframe_count": 1,
+                "external_script_count": 4,
+                "suspicious_text_hit_count": 0,
+                "page_brand_mismatch": 0,
+            },
+            reputation={"verdict": "clean"},
+        )
+        self.assertEqual(risk_level, "medium")
+
+    def test_oauth_style_brand_mismatch_without_url_evidence_stays_medium(self):
+        risk_level = api_server._determine_risk_level(
+            prediction=1,
+            model_confidence=0.99,
+            effective_confidence=1.0,
+            url_features={
+                "has_brand_mismatch": 0,
+                "has_suspicious_tld": 0,
+                "has_ip_address": 0,
+                "has_executable_path": 0,
+                "has_punycode": 0,
+                "has_suspicious_keyword": 1,
+            },
+            dom_signals={
+                "form_count": 1,
+                "password_field_count": 1,
+                "hidden_iframe_count": 0,
+                "external_script_count": 4,
+                "suspicious_text_hit_count": 3,
+                "page_brand_mismatch": 1,
+            },
+            reputation={"verdict": "unavailable"},
+        )
+        self.assertEqual(risk_level, "medium")
 
 
 if __name__ == "__main__":

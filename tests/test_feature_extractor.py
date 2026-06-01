@@ -19,6 +19,14 @@ class FeatureExtractorTests(unittest.TestCase):
         self.assertEqual(features["has_brand_mismatch"], 0)
         self.assertEqual(features["has_suspicious_keyword"], 1)
 
+    def test_youtube_watch_url_is_known_trusted_domain(self):
+        features = extract_features(
+            "https://www.youtube.com/watch?v=XkvZkBDjOI4&feature=youtu.be"
+        )
+        self.assertEqual(features["is_known_trusted_domain"], 1)
+        self.assertEqual(features["has_brand_keyword"], 1)
+        self.assertEqual(features["has_brand_mismatch"], 0)
+
     def test_phishing_brand_mismatch_sets_risky_flags(self):
         features = extract_features(
             "http://login-secure.paypal.verify-account.xyz/cmd=_login-submit"

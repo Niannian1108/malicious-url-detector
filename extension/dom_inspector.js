@@ -103,9 +103,87 @@ function shouldSkipCurrentPage() {
   );
 }
 
+function showCautionBanner(message) {
+  const existing = document.getElementById("malicious-url-detector-caution");
+  if (existing) {
+    existing.remove();
+  }
+
+  const confidence = Number(message.confidence);
+  const confidenceLabel = Number.isFinite(confidence)
+    ? `${Math.round(confidence * 100)}%`
+    : "elevated";
+  const reasons = Array.isArray(message.reasons) && message.reasons.length
+    ? message.reasons
+    : ["This page matched suspicious URL or page signals."];
+
+  const banner = document.createElement("div");
+  banner.id = "malicious-url-detector-caution";
+  banner.style.cssText = [
+    "position: fixed",
+    "left: 16px",
+    "right: 16px",
+    "bottom: 16px",
+    "z-index: 2147483647",
+    "box-sizing: border-box",
+    "max-width: 760px",
+    "margin: 0 auto",
+    "padding: 14px 16px",
+    "border: 1px solid rgba(146, 64, 14, 0.35)",
+    "border-radius: 8px",
+    "background: #fff7ed",
+    "color: #1c1917",
+    "box-shadow: 0 16px 40px rgba(28, 25, 23, 0.18)",
+    "font: 14px/1.45 Georgia, 'Times New Roman', serif",
+  ].join(";");
+
+  const title = document.createElement("div");
+  title.textContent = `Caution: this page looks suspicious (${confidenceLabel} confidence)`;
+  title.style.cssText = "font-weight: 700; margin-bottom: 6px;";
+
+  const reasonText = document.createElement("div");
+  reasonText.textContent = reasons.slice(0, 2).join(" ");
+  reasonText.style.cssText = "padding-right: 32px;";
+
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.textContent = "Dismiss";
+  closeButton.style.cssText = [
+    "position: absolute",
+    "right: 10px",
+    "top: 10px",
+    "border: 1px solid rgba(146, 64, 14, 0.35)",
+    "border-radius: 6px",
+    "background: #ffffff",
+    "color: #1c1917",
+    "padding: 4px 8px",
+    "font: inherit",
+    "cursor: pointer",
+  ].join(";");
+  closeButton.addEventListener("click", () => banner.remove());
+
+  banner.append(title, reasonText, closeButton);
+  document.documentElement.appendChild(banner);
+}
+
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message?.type === "show-caution-banner") {
+    showCautionBanner(message);
+    sendResponse({ ok: true });
+    return false;
+  }
+
+  return false;
+});
+
 if (!shouldSkipCurrentPage()) {
   window.addEventListener("load", () => {
     try {
+      chrome.runtime.sendMessage({
+        type: "dom-ready",
+        url: window.location.href,
+      });
+
       chrome.runtime.sendMessage({
         type: "analyze-page-dom",
         url: window.location.href,

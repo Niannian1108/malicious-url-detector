@@ -48,6 +48,7 @@ SUSPICIOUS_TLDS = {
 # Brand tokens and domains that are legitimately owned by those brands.
 BRAND_DOMAIN_MAP = {
     "google": ("google.com", "googleapis.com", "googleusercontent.com", "withgoogle.com"),
+    "youtube": ("youtube.com", "youtu.be", "googlevideo.com", "ytimg.com"),
     "github": ("github.com", "githubusercontent.com", "githubassets.com"),
     "microsoft": ("microsoft.com", "live.com", "office.com", "microsoftonline.com", "windows.com"),
     "apple": ("apple.com", "icloud.com"),

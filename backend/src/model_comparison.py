@@ -144,7 +144,7 @@ def evaluate_hard_negatives(model_name: str, fitted_model, feature_columns: list
 
 
 def build_threshold_table(fitted_model, X_test, y_test, feature_columns: list[str], hard_negative_csv: str) -> pd.DataFrame:
-    """Create a threshold sweep table for the deployed Random Forest."""
+    """Create a threshold sweep table for the selected deployed model."""
     hard_raw = pd.read_csv(hard_negative_csv)
     X_hard, y_hard, _ = build_feature_frame(hard_raw)
     X_hard = X_hard.reindex(columns=feature_columns, fill_value=0)
@@ -198,8 +198,8 @@ def select_deployed_model(main_df: pd.DataFrame, hard_df: pd.DataFrame) -> str:
     """
     Choose the report recommendation.
 
-    Random Forest remains the deployed default unless another model is clearly
-    stronger on both malicious recall and hard-negative false positives.
+    Prefer the model that clearly improves malicious recall without increasing
+    hard-negative false positives.
     """
     rf_main = main_df.loc[main_df["model"] == "Random Forest"].iloc[0]
     rf_hard = hard_df.loc[hard_df["model"] == "Random Forest"].iloc[0]

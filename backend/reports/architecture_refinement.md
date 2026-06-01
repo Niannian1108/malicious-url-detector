@@ -13,6 +13,7 @@ For FYP 2, the implementation was refined into a Chrome extension plus FastAPI b
 - Gradient Boosting deployment model selected after baseline comparison
 - Threshold-based `low` / `medium` / `high` risk responses
 - Lightweight DOM-assisted heuristics collected by the extension after page load
+- Optional VirusTotal reputation lookup as a second opinion for suspicious URLs
 - SQLite logging for prediction history and evaluation support
 
 ## Why the Architecture Was Refined
@@ -34,6 +35,7 @@ The refinement preserves the core research problem:
 - detecting malicious websites before harm occurs
 - extracting explainable URL/domain-level features
 - augmenting URL signals with lightweight page heuristics where practical
+- using optional external reputation evidence to reduce avoidable false positives
 - applying supervised machine learning for classification
 - balancing malicious recall against false positives for user safety
 

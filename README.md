@@ -84,6 +84,19 @@ The API will be available at:
 - `http://127.0.0.1:8000/`
 - `http://127.0.0.1:8000/docs`
 
+### Optional VirusTotal Reputation Check
+
+The backend can use VirusTotal as a second opinion for medium- and high-risk local predictions. This is optional and disabled by default.
+
+To enable it, set an API key before starting the backend:
+
+```powershell
+$env:VIRUSTOTAL_API_KEY="your_api_key_here"
+uvicorn backend.src.api_server:app --reload
+```
+
+The implementation checks existing VirusTotal URL reports and caches results in `backend/logs/reputation_cache.db`. It does not submit every visited URL for scanning. For privacy and rate-limit reasons, reputation lookup is only used when the local detector already considers a URL suspicious.
+
 ## Load the Chrome Extension
 
 1. Open Chrome and go to `chrome://extensions/`
@@ -245,6 +258,7 @@ The current detector now combines:
 - trust-aware signals such as known trusted domains
 - brand/domain consistency signals that distinguish legitimate brand-owned URLs from lookalike phishing domains
 - lightweight page heuristics such as password fields, hidden iframes, suspicious page text, external script count, and simple brand/domain mismatch cues collected by the extension after load
+- optional reputation signals from VirusTotal when `VIRUSTOTAL_API_KEY` is configured
 
 The current deployed model is **Gradient Boosting**, selected after model comparison because it outperformed the other tested baselines while keeping hard-negative benign false positives at `0%`.
 
@@ -254,6 +268,8 @@ The Chrome extension currently uses:
 - a `medium` risk threshold of `0.70` for caution warnings
 
 These thresholds were chosen to preserve `0%` hard-negative benign false positives while maintaining strong malicious recall during threshold analysis.
+
+Common DOM signals such as hidden iframes are treated as supporting evidence only. They can raise a result to caution, but they do not create a high-risk block by themselves unless stronger URL evidence or external reputation evidence also supports the decision.
 
 ## Run Tests
 
@@ -278,7 +294,8 @@ The test suite covers:
 
 ## Known Limitations
 
-- The system is still mostly URL-centric. It now adds lightweight DOM heuristics, but it does not perform deep page-content classification, live redirect tracing, certificate analysis, reputation lookups, or screenshot-based inspection.
+- The system is still mostly URL-centric. It now adds lightweight DOM heuristics and optional VirusTotal reputation checks, but it does not perform deep page-content classification, live redirect tracing, certificate analysis, or screenshot-based inspection.
+- Reputation checks may send suspicious URLs to VirusTotal when enabled, so this feature should be disclosed clearly in privacy or limitation discussions.
 - Even with trust-aware and brand/domain features, the model can still produce false positives or miss attacks that look benign lexically.
 - The extension depends on the local backend being up.
 - The warning page is safer than `about:blank`, but the model can still be wrong and users may need to override false positives.
@@ -290,4 +307,4 @@ The test suite covers:
 - Track dataset versions and refresh dates more formally
 - Add a scripted data refresh flow for OpenPhish, Tranco, and optionally PhishTank
 - Expand the lightweight page-signal layer and validate it against more real-world phishing and hard-negative benign pages
-- Add richer non-lexical signals such as reputation, redirects, and certificate cues
+- Add richer non-lexical signals such as redirects and certificate cues

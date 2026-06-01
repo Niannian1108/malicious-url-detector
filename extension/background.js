@@ -1,6 +1,4 @@
 const API_URL = "http://127.0.0.1:8000/predict";
-const BLOCK_CONFIDENCE_THRESHOLD = 0.90;
-const CAUTION_CONFIDENCE_THRESHOLD = 0.70;
 const PROCEED_OVERRIDE_TTL_MS = 60_000;
 
 // Temporary allowlist while the model and dataset are still immature.
@@ -26,6 +24,14 @@ function isTrustedDomain(targetUrl) {
 const proceedOverrides = new Map();
 const tabRiskState = new Map();
 
+function getHostname(targetUrl) {
+  try {
+    return new URL(targetUrl).hostname;
+  } catch (error) {
+    return "";
+  }
+}
+
 function buildBlockedPageUrl(targetUrl, confidence, riskLevel, reasons = []) {
   const blockedPage = new URL(chrome.runtime.getURL("blocked.html"));
   blockedPage.searchParams.set("url", targetUrl);
@@ -40,30 +46,35 @@ function buildBlockedPageUrl(targetUrl, confidence, riskLevel, reasons = []) {
 function allowProceedOnce(tabId, targetUrl) {
   proceedOverrides.set(tabId, {
     url: targetUrl,
+    hostname: getHostname(targetUrl),
     expiresAt: Date.now() + PROCEED_OVERRIDE_TTL_MS,
   });
 }
 
-function consumeProceedOverride(tabId, targetUrl) {
+function hasProceedOverride(tabId, targetUrl) {
   const override = proceedOverrides.get(tabId);
   if (!override) {
     return false;
   }
 
   const isExpired = Date.now() > override.expiresAt;
-  const matchesTarget = override.url === targetUrl;
+  const targetHostname = getHostname(targetUrl);
+  const matchesTarget = override.url === targetUrl || (
+    override.hostname &&
+    targetHostname &&
+    override.hostname === targetHostname
+  );
 
-  if (isExpired || !matchesTarget) {
+  if (isExpired) {
     proceedOverrides.delete(tabId);
     return false;
   }
 
-  proceedOverrides.delete(tabId);
-  return true;
+  return matchesTarget;
 }
 
-function rememberTabRisk(tabId, targetUrl, riskLevel) {
-  tabRiskState.set(tabId, { url: targetUrl, riskLevel });
+function rememberTabRisk(tabId, targetUrl, riskLevel, details = {}) {
+  tabRiskState.set(tabId, { url: targetUrl, riskLevel, ...details });
 }
 
 function shouldSkipUrl(targetUrl) {
@@ -111,6 +122,22 @@ function showNotification(title, message) {
   });
 }
 
+function showCautionBanner(tabId, targetUrl, result) {
+  chrome.tabs.sendMessage(tabId, {
+    type: "show-caution-banner",
+    url: targetUrl,
+    confidence: result.confidence,
+    reasons: result.reasons || [],
+  }, () => {
+    if (chrome.runtime.lastError) {
+      console.debug(
+        "[Malicious URL Detector] Caution banner not shown:",
+        chrome.runtime.lastError.message
+      );
+    }
+  });
+}
+
 function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
   const confidencePct = Math.round((result.confidence || 0) * 100);
 
@@ -120,7 +147,10 @@ function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
       `(Confidence: ${result.confidence})`
     );
 
-    rememberTabRisk(tabId, targetUrl, "high");
+    rememberTabRisk(tabId, targetUrl, "high", {
+      confidence: result.confidence,
+      reasons: result.reasons || [],
+    });
     chrome.tabs.update(tabId, {
       url: buildBlockedPageUrl(targetUrl, result.confidence, result.risk_level, result.reasons),
     });
@@ -142,7 +172,11 @@ function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
       `[Malicious URL Detector] Medium-risk ${source} result for ${targetUrl} ` +
       `(Confidence: ${result.confidence})`
     );
-    rememberTabRisk(tabId, targetUrl, "medium");
+    rememberTabRisk(tabId, targetUrl, "medium", {
+      confidence: result.confidence,
+      reasons: result.reasons || [],
+    });
+    showCautionBanner(tabId, targetUrl, result);
     showNotification(
       "Caution: Suspicious Website",
       `This page looks suspicious (${confidencePct}% confidence). Review it carefully.`
@@ -150,7 +184,10 @@ function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
     return;
   }
 
-  rememberTabRisk(tabId, targetUrl, "low");
+  rememberTabRisk(tabId, targetUrl, "low", {
+    confidence: result.confidence,
+    reasons: result.reasons || [],
+  });
   console.log(`[Malicious URL Detector] URL is safe: ${targetUrl}`);
 }
 
@@ -178,11 +215,38 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message?.type === "dom-ready") {
+    const tabId = sender.tab?.id;
+    const targetUrl = message.url;
+    const previous = tabRiskState.get(tabId);
+
+    if (
+      typeof tabId === "number" &&
+      targetUrl &&
+      previous?.url === targetUrl &&
+      previous.riskLevel === "medium"
+    ) {
+      showCautionBanner(tabId, targetUrl, {
+        confidence: previous.confidence,
+        reasons: previous.reasons || [],
+      });
+    }
+
+    sendResponse({ ok: true });
+    return false;
+  }
+
   if (message?.type === "analyze-page-dom") {
     const tabId = sender.tab?.id;
     const targetUrl = message.url;
 
-    if (typeof tabId !== "number" || !targetUrl || shouldSkipUrl(targetUrl) || isTrustedDomain(targetUrl)) {
+    if (
+      typeof tabId !== "number" ||
+      !targetUrl ||
+      shouldSkipUrl(targetUrl) ||
+      isTrustedDomain(targetUrl) ||
+      hasProceedOverride(tabId, targetUrl)
+    ) {
       sendResponse({ ok: false, skipped: true });
       return false;
     }
@@ -215,8 +279,8 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     return;
   }
 
-  if (consumeProceedOverride(details.tabId, targetUrl)) {
-    console.log(`[Malicious URL Detector] Proceed-once override used for: ${targetUrl}`);
+  if (hasProceedOverride(details.tabId, targetUrl)) {
+    console.log(`[Malicious URL Detector] Proceed override active for: ${targetUrl}`);
     return;
   }
 
@@ -229,13 +293,6 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     console.log("Sending request to backend:", targetUrl);
     const result = await classifyUrl(targetUrl);
     console.log("Backend response:", result);
-
-    // Keep the existing thresholds aligned with the backend severity bands.
-    if (result.prediction === 1 && result.confidence >= BLOCK_CONFIDENCE_THRESHOLD) {
-      result.risk_level = "high";
-    } else if (result.prediction === 1 && result.confidence >= CAUTION_CONFIDENCE_THRESHOLD) {
-      result.risk_level = "medium";
-    }
 
     handleRiskResult(details.tabId, targetUrl, result);
 

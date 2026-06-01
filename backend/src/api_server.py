@@ -43,6 +43,7 @@ if SRC_DIR not in sys.path:
 
 from feature_extractor import extract_features  # noqa: E402
 from logger_db import init_db, log_event        # noqa: E402
+from reputation_checker import check_reputation  # noqa: E402
 
 # Path to the saved model artefact produced by train_model.py
 MODEL_PATH = os.path.join(BACKEND_DIR, "models", "model_v1.joblib")
@@ -169,9 +170,10 @@ class PredictRequest(BaseModel):
 class PredictResponse(BaseModel):
     """JSON body returned by POST /predict."""
     prediction: int    # 0 = benign, 1 = malicious
-    confidence: float  # probability that the URL belongs to class 1 (malicious)
+    confidence: float  # combined local risk score after lightweight adjustments
     risk_level: str    # low, medium, or high
     reasons: List[str]
+    reputation: dict | None = None
 
 
 def _normalise_dom_signals(dom_signals: DomSignals | None) -> dict[str, int]:
@@ -191,24 +193,62 @@ def _normalise_dom_signals(dom_signals: DomSignals | None) -> dict[str, int]:
 def _adjust_confidence(base_confidence: float, url_features: dict, dom_signals: dict[str, int]) -> float:
     """Raise confidence slightly when lightweight page signals reinforce suspicion."""
     adjustment = 0.0
+    strong_url_evidence = _has_strong_url_evidence(url_features)
 
     if dom_signals["password_field_count"] and url_features.get("has_suspicious_keyword"):
-        adjustment += 0.08
-    if dom_signals["hidden_iframe_count"]:
-        adjustment += 0.10
+        adjustment += 0.04 if strong_url_evidence else 0.02
+    if dom_signals["hidden_iframe_count"] and strong_url_evidence:
+        adjustment += 0.03
     if dom_signals["page_brand_mismatch"]:
-        adjustment += 0.12
-    if dom_signals["external_script_count"] >= 8:
-        adjustment += 0.04
-    if dom_signals["suspicious_text_hit_count"] >= 3:
-        adjustment += 0.05
+        adjustment += 0.08 if url_features.get("has_brand_mismatch") else 0.03
+    if dom_signals["external_script_count"] >= 12 and strong_url_evidence:
+        adjustment += 0.02
+    if dom_signals["suspicious_text_hit_count"] >= 4:
+        adjustment += 0.03 if strong_url_evidence else 0.01
 
     return round(min(1.0, base_confidence + adjustment), 4)
 
 
-def _determine_risk_level(prediction: int, effective_confidence: float, url_features: dict, dom_signals: dict[str, int]) -> str:
+def _has_strong_url_evidence(url_features: dict) -> bool:
+    """Return True when URL-only signals are strong enough to support blocking."""
+    return any(
+        [
+            url_features.get("has_brand_mismatch"),
+            url_features.get("has_suspicious_tld"),
+            url_features.get("has_ip_address"),
+            url_features.get("has_executable_path"),
+            url_features.get("has_punycode"),
+        ]
+    )
+
+
+def _has_strong_dom_evidence(dom_signals: dict[str, int]) -> bool:
+    """Return True for DOM evidence stronger than common embedded page structure."""
+    return (
+        dom_signals["password_field_count"] > 0
+        and bool(dom_signals["page_brand_mismatch"])
+        and dom_signals["suspicious_text_hit_count"] >= 4
+    )
+
+
+def _determine_risk_level(
+    prediction: int,
+    model_confidence: float,
+    effective_confidence: float,
+    url_features: dict,
+    dom_signals: dict[str, int],
+    reputation: dict,
+) -> str:
     """Translate model output and heuristics into a user-facing severity band."""
-    if prediction == 1 and effective_confidence >= 0.90:
+    reputation_verdict = reputation.get("verdict")
+    if reputation_verdict == "malicious":
+        return "high"
+    if reputation_verdict == "clean" and not _has_strong_url_evidence(url_features):
+        return "low" if model_confidence < 0.70 else "medium"
+
+    strong_local_evidence = _has_strong_url_evidence(url_features) or _has_strong_dom_evidence(dom_signals)
+
+    if prediction == 1 and effective_confidence >= 0.90 and strong_local_evidence:
         return "high"
     if prediction == 1 and effective_confidence >= 0.70:
         return "medium"
@@ -233,10 +273,16 @@ def _determine_risk_level(prediction: int, effective_confidence: float, url_feat
     return "low"
 
 
-def _build_reasons(url_features: dict, dom_signals: dict[str, int], effective_confidence: float) -> List[str]:
+def _build_reasons(url_features: dict, dom_signals: dict[str, int], effective_confidence: float, reputation: dict) -> List[str]:
     """Generate short explanation bullets for warning and demo purposes."""
     reasons: list[str] = []
 
+    if reputation.get("verdict") == "malicious":
+        reasons.append("External reputation data reports this URL as malicious.")
+    elif reputation.get("verdict") == "suspicious":
+        reasons.append("External reputation data reports suspicious activity for this URL.")
+    elif reputation.get("verdict") == "clean":
+        reasons.append("External reputation data did not find malicious detections for this URL.")
     if url_features.get("has_brand_mismatch"):
         reasons.append("The URL mentions a trusted brand on a non-brand domain.")
     if url_features.get("has_suspicious_tld"):
@@ -253,7 +299,7 @@ def _build_reasons(url_features: dict, dom_signals: dict[str, int], effective_co
         reasons.append("The page content suggests a brand/domain mismatch.")
     if dom_signals["suspicious_text_hit_count"] >= 3:
         reasons.append("The page text contains multiple security- or account-themed bait terms.")
-    if effective_confidence >= 0.90:
+    if effective_confidence >= 0.90 and (_has_strong_url_evidence(url_features) or _has_strong_dom_evidence(dom_signals)):
         reasons.append("The combined risk score is high enough to justify blocking.")
     elif effective_confidence >= 0.70:
         reasons.append("The combined risk score is elevated and worth caution.")
@@ -279,6 +325,7 @@ def health_check():
         "message": "Malicious URL Detector API is running.",
         "deployed_model": MODEL_NAME,
         "model_features": len(FEATURES),
+        "reputation_lookup": "enabled" if os.getenv("VIRUSTOTAL_API_KEY", "").strip() else "disabled",
     }
 
 
@@ -293,7 +340,8 @@ def predict(request: PredictRequest):
         3. Build a one-row DataFrame whose columns match the training columns
            exactly (order matters for sklearn).
         4. Run the deployed classifier.
-        5. Return the hard prediction (0/1) and the malicious probability.
+        5. Optionally check external reputation for medium/high local risk.
+        6. Return the hard prediction, risk score, severity, and reasons.
 
     Parameters
     ----------
@@ -339,8 +387,22 @@ def predict(request: PredictRequest):
     model_confidence = round(model_confidence, 4)
     dom_signals = _normalise_dom_signals(request.dom_signals)
     effective_confidence = _adjust_confidence(model_confidence, raw_features, dom_signals)
-    risk_level = _determine_risk_level(prediction, effective_confidence, raw_features, dom_signals)
-    reasons = _build_reasons(raw_features, dom_signals, effective_confidence)
+    preliminary_high = prediction == 1 and effective_confidence >= 0.90
+    preliminary_medium = prediction == 1 and effective_confidence >= 0.70
+    reputation = (
+        check_reputation(url)
+        if preliminary_high or preliminary_medium
+        else {"enabled": False, "source": "skipped", "verdict": "not_checked"}
+    )
+    risk_level = _determine_risk_level(
+        prediction,
+        model_confidence,
+        effective_confidence,
+        raw_features,
+        dom_signals,
+        reputation,
+    )
+    reasons = _build_reasons(raw_features, dom_signals, effective_confidence, reputation)
 
     # -- Step 5: Log the event to the database --------------------------------
     # This is a best-effort write; we do not fail the request if logging fails.
@@ -356,6 +418,7 @@ def predict(request: PredictRequest):
         confidence=effective_confidence,
         risk_level=risk_level,
         reasons=reasons,
+        reputation=reputation,
     )
 
 
