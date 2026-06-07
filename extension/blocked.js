@@ -2,6 +2,7 @@ const params = new URLSearchParams(window.location.search);
 const targetUrl = params.get("url") || "";
 const confidence = Number(params.get("confidence"));
 const riskLevel = (params.get("risk") || "high").toLowerCase();
+const returnUrl = params.get("returnUrl") || "";
 const reasons = params.getAll("reason");
 
 const blockedUrlEl = document.getElementById("blockedUrl");
@@ -45,16 +46,23 @@ function setBusyState(isBusy, message = "") {
 }
 
 goBackButton.addEventListener("click", async () => {
-  try {
-    if (window.history.length > 1) {
-      window.history.back();
-      return;
-    }
+  setBusyState(true, "Returning to the previous safe page...");
 
-    window.location.replace("about:blank");
+  try {
+    const result = await chrome.runtime.sendMessage({
+      type: "go-back-from-block",
+      url: targetUrl,
+      returnUrl,
+    });
+
+    if (!result?.ok) {
+      throw new Error(result?.error || "Unknown error");
+    }
   } catch (error) {
     console.error("[Malicious URL Detector] Go-back action failed:", error);
     statusTextEl.textContent = "Could not go back automatically. You can close this tab.";
+    goBackButton.disabled = false;
+    proceedButton.disabled = false;
   }
 });
 

@@ -36,13 +36,16 @@ SUSPICIOUS_KEYWORDS = [
 
 # Common extensions used in phishing landing pages or downloadable payloads.
 EXECUTABLE_EXTENSIONS = (
-    ".php", ".asp", ".aspx", ".jsp", ".js", ".exe", ".dll", ".scr", ".zip"
+    ".php", ".asp", ".aspx", ".jsp", ".js",
+    ".exe", ".dll", ".scr", ".zip", ".msi",
+    ".docm", ".xlsm", ".pptm", ".bat", ".cmd", ".vbs", ".ps1", ".jar", ".apk",
 )
 
 # A small hand-curated set of higher-risk TLDs seen frequently in abuse.
 SUSPICIOUS_TLDS = {
     "biz", "cc", "cf", "click", "country", "download", "gq", "info", "kim",
-    "loan", "ml", "ga", "ru", "support", "tk", "top", "work", "xyz", "zip",
+    "loan", "ml", "ga", "online", "ru", "support", "tk", "top", "work",
+    "xyz", "zip",
 }
 
 # Brand tokens and domains that are legitimately owned by those brands.
@@ -58,6 +61,7 @@ BRAND_DOMAIN_MAP = {
     "amazon": ("amazon.com", "amazonpay.com"),
     "aws": ("amazon.com", "aws.amazon.com"),
     "atlassian": ("atlassian.com",),
+    "phishtank": ("phishtank.com",),
 }
 
 _IPV4_RE = re.compile(

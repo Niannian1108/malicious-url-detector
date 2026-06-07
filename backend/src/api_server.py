@@ -243,6 +243,8 @@ def _determine_risk_level(
     reputation_verdict = reputation.get("verdict")
     if reputation_verdict == "malicious":
         return "high"
+    if url_features.get("is_known_trusted_domain") and not url_features.get("has_brand_mismatch"):
+        return "low" if prediction == 0 or model_confidence < 0.70 else "medium"
     if reputation_verdict == "clean" and not _has_strong_url_evidence(url_features):
         return "low" if model_confidence < 0.70 else "medium"
 

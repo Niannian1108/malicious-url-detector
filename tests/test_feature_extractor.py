@@ -27,6 +27,12 @@ class FeatureExtractorTests(unittest.TestCase):
         self.assertEqual(features["has_brand_keyword"], 1)
         self.assertEqual(features["has_brand_mismatch"], 0)
 
+    def test_phishtank_research_pages_are_known_trusted_domain(self):
+        features = extract_features("https://www.phishtank.com/phish_archive.php")
+        self.assertEqual(features["is_known_trusted_domain"], 1)
+        self.assertEqual(features["has_brand_keyword"], 1)
+        self.assertEqual(features["has_brand_mismatch"], 0)
+
     def test_phishing_brand_mismatch_sets_risky_flags(self):
         features = extract_features(
             "http://login-secure.paypal.verify-account.xyz/cmd=_login-submit"
@@ -42,6 +48,18 @@ class FeatureExtractorTests(unittest.TestCase):
         self.assertEqual(features["has_ip_address"], 1)
         self.assertEqual(features["has_executable_path"], 1)
         self.assertGreaterEqual(features["path_depth"], 2)
+
+    def test_macro_document_and_installer_paths_are_payload_like(self):
+        docm_features = extract_features("https://login.croppng.online/ad_document.docm?r=aFIlIT")
+        msi_features = extract_features(
+            "https://login.croppng.online/evidence/phish_download_now.msi?r=TX48UR"
+        )
+        self.assertEqual(docm_features["has_executable_path"], 1)
+        self.assertEqual(msi_features["has_executable_path"], 1)
+
+    def test_online_tld_is_suspicious(self):
+        features = extract_features("https://www.creepylink.online/")
+        self.assertEqual(features["has_suspicious_tld"], 1)
 
     def test_punycode_and_query_parameter_count(self):
         features = extract_features("https://xn--paypl-3ve.com/login?user=a&token=b")

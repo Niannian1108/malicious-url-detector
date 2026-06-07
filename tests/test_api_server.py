@@ -99,6 +99,37 @@ class ApiServerTests(unittest.TestCase):
         self.assertGreaterEqual(dom_payload.confidence, base_payload.confidence)
         self.assertEqual(dom_payload.risk_level, "high")
 
+    def test_macro_document_payload_url_is_block_level_risk(self):
+        payload = api_server.predict(
+            api_server.PredictRequest(
+                url="https://login.croppng.online/ad_document.docm?r=aFIlIT"
+            )
+        )
+        self.assertEqual(payload.prediction, 1)
+        self.assertEqual(payload.risk_level, "high")
+
+    def test_installer_payload_url_is_block_level_risk(self):
+        payload = api_server.predict(
+            api_server.PredictRequest(
+                url="https://login.croppng.online/evidence/phish_download_now.msi?r=TX48UR"
+            )
+        )
+        self.assertEqual(payload.prediction, 1)
+        self.assertEqual(payload.risk_level, "high")
+
+    def test_suspicious_online_domain_is_block_level_when_model_confident(self):
+        payload = api_server.predict(
+            api_server.PredictRequest(url="https://www.creepylink.online/")
+        )
+        self.assertEqual(payload.prediction, 1)
+        self.assertEqual(payload.risk_level, "high")
+
+    def test_trusted_phishtank_research_page_is_not_hard_blocked(self):
+        payload = api_server.predict(
+            api_server.PredictRequest(url="https://www.phishtank.com/phish_archive.php")
+        )
+        self.assertNotEqual(payload.risk_level, "high")
+
     def test_hidden_iframe_alone_does_not_create_high_risk(self):
         risk_level = api_server._determine_risk_level(
             prediction=1,

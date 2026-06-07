@@ -1,5 +1,6 @@
 const API_URL = "http://127.0.0.1:8000/predict";
 const PROCEED_OVERRIDE_TTL_MS = 60_000;
+const SAFE_FALLBACK_URL = "about:blank";
 
 // Temporary allowlist while the model and dataset are still immature.
 const TRUSTED_DOMAINS = [
@@ -23,6 +24,13 @@ function isTrustedDomain(targetUrl) {
 
 const proceedOverrides = new Map();
 const tabRiskState = new Map();
+const tabReturnState = new Map();
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  proceedOverrides.delete(tabId);
+  tabRiskState.delete(tabId);
+  tabReturnState.delete(tabId);
+});
 
 function getHostname(targetUrl) {
   try {
@@ -32,11 +40,44 @@ function getHostname(targetUrl) {
   }
 }
 
-function buildBlockedPageUrl(targetUrl, confidence, riskLevel, reasons = []) {
+function isBlockedPageUrl(targetUrl) {
+  return targetUrl.startsWith(chrome.runtime.getURL("blocked.html"));
+}
+
+function isUsableReturnUrl(returnUrl, blockedUrl = "") {
+  return (
+    typeof returnUrl === "string" &&
+    returnUrl &&
+    returnUrl !== blockedUrl &&
+    !shouldSkipUrl(returnUrl) &&
+    !isBlockedPageUrl(returnUrl)
+  );
+}
+
+async function getReturnUrlForNavigation(tabId, targetUrl) {
+  const previousState = tabReturnState.get(tabId);
+
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    const currentUrl = tab?.url || "";
+
+    if (isUsableReturnUrl(currentUrl, targetUrl)) {
+      tabReturnState.set(tabId, { returnUrl: currentUrl });
+      return currentUrl;
+    }
+  } catch (error) {
+    console.debug("[Malicious URL Detector] Could not read current tab URL:", error);
+  }
+
+  return previousState?.returnUrl || SAFE_FALLBACK_URL;
+}
+
+function buildBlockedPageUrl(targetUrl, confidence, riskLevel, reasons = [], returnUrl = SAFE_FALLBACK_URL) {
   const blockedPage = new URL(chrome.runtime.getURL("blocked.html"));
   blockedPage.searchParams.set("url", targetUrl);
   blockedPage.searchParams.set("confidence", String(confidence));
   blockedPage.searchParams.set("risk", riskLevel);
+  blockedPage.searchParams.set("returnUrl", returnUrl);
   for (const reason of reasons.slice(0, 4)) {
     blockedPage.searchParams.append("reason", reason);
   }
@@ -46,7 +87,6 @@ function buildBlockedPageUrl(targetUrl, confidence, riskLevel, reasons = []) {
 function allowProceedOnce(tabId, targetUrl) {
   proceedOverrides.set(tabId, {
     url: targetUrl,
-    hostname: getHostname(targetUrl),
     expiresAt: Date.now() + PROCEED_OVERRIDE_TTL_MS,
   });
 }
@@ -58,12 +98,7 @@ function hasProceedOverride(tabId, targetUrl) {
   }
 
   const isExpired = Date.now() > override.expiresAt;
-  const targetHostname = getHostname(targetUrl);
-  const matchesTarget = override.url === targetUrl || (
-    override.hostname &&
-    targetHostname &&
-    override.hostname === targetHostname
-  );
+  const matchesTarget = override.url === targetUrl;
 
   if (isExpired) {
     proceedOverrides.delete(tabId);
@@ -71,6 +106,16 @@ function hasProceedOverride(tabId, targetUrl) {
   }
 
   return matchesTarget;
+}
+
+async function tabStillOnUrl(tabId, targetUrl) {
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    return tab?.url === targetUrl;
+  } catch (error) {
+    console.debug("[Malicious URL Detector] Could not verify active tab URL:", error);
+    return false;
+  }
 }
 
 function rememberTabRisk(tabId, targetUrl, riskLevel, details = {}) {
@@ -138,7 +183,7 @@ function showCautionBanner(tabId, targetUrl, result) {
   });
 }
 
-function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
+function handleRiskResult(tabId, targetUrl, result, source = "url-only", returnUrl = null) {
   const confidencePct = Math.round((result.confidence || 0) * 100);
 
   if (result.risk_level === "high") {
@@ -151,8 +196,15 @@ function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
       confidence: result.confidence,
       reasons: result.reasons || [],
     });
+    const safeReturnUrl = returnUrl || tabReturnState.get(tabId)?.returnUrl || SAFE_FALLBACK_URL;
     chrome.tabs.update(tabId, {
-      url: buildBlockedPageUrl(targetUrl, result.confidence, result.risk_level, result.reasons),
+      url: buildBlockedPageUrl(
+        targetUrl,
+        result.confidence,
+        result.risk_level,
+        result.reasons,
+        safeReturnUrl
+      ),
     });
 
     showNotification(
@@ -176,6 +228,7 @@ function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
       confidence: result.confidence,
       reasons: result.reasons || [],
     });
+    tabReturnState.set(tabId, { returnUrl: targetUrl });
     showCautionBanner(tabId, targetUrl, result);
     showNotification(
       "Caution: Suspicious Website",
@@ -188,6 +241,7 @@ function handleRiskResult(tabId, targetUrl, result, source = "url-only") {
     confidence: result.confidence,
     reasons: result.reasons || [],
   });
+  tabReturnState.set(tabId, { returnUrl: targetUrl });
   console.log(`[Malicious URL Detector] URL is safe: ${targetUrl}`);
 }
 
@@ -210,6 +264,37 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
 
       sendResponse({ ok: true });
+    });
+
+    return true;
+  }
+
+  if (message?.type === "go-back-from-block") {
+    const tabId = sender.tab?.id;
+    const blockedUrl = message.url || "";
+    const requestedReturnUrl = message.returnUrl || "";
+    const storedReturnUrl = typeof tabId === "number"
+      ? tabReturnState.get(tabId)?.returnUrl
+      : "";
+    const destination = isUsableReturnUrl(requestedReturnUrl, blockedUrl)
+      ? requestedReturnUrl
+      : isUsableReturnUrl(storedReturnUrl, blockedUrl)
+        ? storedReturnUrl
+        : SAFE_FALLBACK_URL;
+
+    if (typeof tabId !== "number") {
+      sendResponse({ ok: false });
+      return false;
+    }
+
+    chrome.tabs.update(tabId, { url: destination }, () => {
+      if (chrome.runtime.lastError) {
+        console.error("[Malicious URL Detector] Could not go back from warning page:", chrome.runtime.lastError.message);
+        sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+        return;
+      }
+
+      sendResponse({ ok: true, destination });
     });
 
     return true;
@@ -252,7 +337,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     classifyUrl(targetUrl, message.domSignals || null)
-      .then((result) => {
+      .then(async (result) => {
+        if (!(await tabStillOnUrl(tabId, targetUrl))) {
+          sendResponse({ ok: false, skipped: true, reason: "stale-dom-result" });
+          return;
+        }
+
         handleRiskResult(tabId, targetUrl, result, "dom-assisted");
         sendResponse({ ok: true, risk_level: result.risk_level });
       })
@@ -290,11 +380,12 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   }
 
   try {
+    const returnUrl = await getReturnUrlForNavigation(details.tabId, targetUrl);
     console.log("Sending request to backend:", targetUrl);
     const result = await classifyUrl(targetUrl);
     console.log("Backend response:", result);
 
-    handleRiskResult(details.tabId, targetUrl, result);
+    handleRiskResult(details.tabId, targetUrl, result, "url-only", returnUrl);
 
   } catch (error) {
     // This catches network errors (e.g., backend server is not running)
