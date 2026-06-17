@@ -1,6 +1,6 @@
 const API_URL = "http://127.0.0.1:8000/predict";
 const PROCEED_OVERRIDE_TTL_MS = 60_000;
-const SAFE_FALLBACK_URL = "about:blank";
+const SAFE_FALLBACK_URL = "chrome://newtab/";
 
 // Temporary allowlist while the model and dataset are still immature.
 const TRUSTED_DOMAINS = [
@@ -44,13 +44,21 @@ function isBlockedPageUrl(targetUrl) {
   return targetUrl.startsWith(chrome.runtime.getURL("blocked.html"));
 }
 
+function isChromeHomeUrl(targetUrl) {
+  return (
+    targetUrl === "chrome://newtab/" ||
+    targetUrl === "chrome://new-tab-page/" ||
+    targetUrl === "about:newtab"
+  );
+}
+
 function isUsableReturnUrl(returnUrl, blockedUrl = "") {
   return (
     typeof returnUrl === "string" &&
     returnUrl &&
     returnUrl !== blockedUrl &&
-    !shouldSkipUrl(returnUrl) &&
-    !isBlockedPageUrl(returnUrl)
+    !isBlockedPageUrl(returnUrl) &&
+    (isChromeHomeUrl(returnUrl) || !shouldSkipUrl(returnUrl))
   );
 }
 
@@ -64,6 +72,16 @@ async function getReturnUrlForNavigation(tabId, targetUrl) {
     if (isUsableReturnUrl(currentUrl, targetUrl)) {
       tabReturnState.set(tabId, { returnUrl: currentUrl });
       return currentUrl;
+    }
+
+    if (typeof tab?.openerTabId === "number") {
+      const openerTab = await chrome.tabs.get(tab.openerTabId);
+      const openerUrl = openerTab?.url || "";
+
+      if (isUsableReturnUrl(openerUrl, targetUrl)) {
+        tabReturnState.set(tabId, { returnUrl: openerUrl });
+        return openerUrl;
+      }
     }
   } catch (error) {
     console.debug("[Malicious URL Detector] Could not read current tab URL:", error);
@@ -375,6 +393,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   }
 
   if (isTrustedDomain(targetUrl)) {
+    tabReturnState.set(details.tabId, { returnUrl: targetUrl });
     console.log(`[Malicious URL Detector] Skipping trusted domain: ${targetUrl}`);
     return;
   }

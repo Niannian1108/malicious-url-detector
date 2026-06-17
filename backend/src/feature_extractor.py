@@ -69,8 +69,9 @@ _IPV4_RE = re.compile(
     r"(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$"
 )
 
-# Keep suffix parsing local so requests do not hang on external cache refreshes.
-_TLD_EXTRACTOR = tldextract.TLDExtract(suffix_list_urls=None)
+# Keep suffix parsing local and cache-free so parallel tests/report scripts do
+# not contend for tldextract's global site-packages cache lock.
+_TLD_EXTRACTOR = tldextract.TLDExtract(cache_dir=None, suffix_list_urls=())
 
 
 def _shannon_entropy(text: str) -> float:
