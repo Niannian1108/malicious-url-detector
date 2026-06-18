@@ -120,9 +120,7 @@ Then load the unpacked extension and browse normally.
 
 ## Warning And Caution Behavior
 
-High-confidence blocks no longer send users straight to `about:blank`.
-
-Instead, the extension opens a built-in warning page that shows:
+High-confidence blocks will open a built-in warning page that shows:
 
 - the blocked URL
 - the model confidence score
@@ -138,8 +136,6 @@ The current extension flow uses three severity bands:
 - `high` risk: open the warning page and block by default
 
 ## Data Currently Included
-
-The project no longer trains on the toy `sample_urls.csv` file by default.
 
 The current model-ready dataset is:
 
@@ -164,14 +160,14 @@ As of June 18, 2026, the combined model-development training/evaluation set cont
 - 878 benign URLs
 - 300 malicious URLs
 
-There is also a separate held-out hard-negative evaluation set containing 21 benign URLs excluded from training.
+There is also a separate held-out hard-negative evaluation set containing 21 benign URLs excluded from training. This set is kept separate so that the false-positive rate on legitimate but suspicious looking pages is measured on URLs the model has never seen during training, giving an unbiased estimate of real-world performance.
 
 There are also dedicated hard-negative benign files:
 
 - `backend/data/raw/official_hard_negatives_train.csv`
 - `backend/data/evaluation/official_hard_negatives_eval.csv`
 
-These files contain official, legitimate URLs from sign-in, security, verification, account recovery, and support pages on trusted domains such as Google, GitHub, Microsoft, Apple, PayPal, Dropbox, Adobe, AWS, Atlassian, and Amazon Pay. These are intentionally "phishy-looking" but safe, which makes them useful for reducing false positives. The evaluation file is excluded from training so false-positive results are measured on held-out URLs.
+These files contain official, legitimate URLs from sign-in, security, verification, account recovery, and support pages on trusted domains such as Google, GitHub, Microsoft, Apple, PayPal, Dropbox, Adobe, AWS, Atlassian, and Amazon Pay. These are "phishy-looking" but safe, which makes them useful for reducing false positives. The evaluation file is excluded from training so false-positive results are measured on held-out URLs.
 
 Benign URLs come from legitimate, traceable sources:
 
@@ -305,7 +301,7 @@ The test suite covers:
 - The warning page is safer than `about:blank`, but the model can still be wrong and users may need to override false positives.
 - Full URLs are stored in the local SQLite log, which has privacy implications.
 
-## Next Recommended Improvements
+## Future Improvements
 
 - Add tests for feature extraction, training, and API behavior
 - Track dataset versions and refresh dates more formally
