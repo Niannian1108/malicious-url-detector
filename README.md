@@ -59,7 +59,7 @@ Train the model with:
 python backend\src\train_model.py
 ```
 
-Because the training script reads every CSV in `backend/data/raw/`, any curated hard-negative benign CSV placed there is included automatically.
+Because the training script reads every CSV in `backend/data/raw/`, only hard-negative benign examples intended for training should be placed there. Held-out evaluation data is stored separately under `backend/data/evaluation/`.
 
 This will:
 
@@ -144,7 +144,8 @@ The project no longer trains on the toy `sample_urls.csv` file by default.
 The current model-ready dataset is:
 
 - `backend/data/raw/internet_urls.csv`
-- `backend/data/raw/official_hard_negatives.csv`
+- `backend/data/raw/official_hard_negatives_train.csv`
+- `backend/data/evaluation/official_hard_negatives_eval.csv`
 
 The source manifest is stored in:
 
@@ -158,16 +159,19 @@ The downloaded source files are stored in:
 
 ### Current Dataset Shape
 
-As of April 25, 2026, the combined training set contains:
+As of June 18, 2026, the combined model-development training/evaluation set contains:
 
-- 899 benign URLs
+- 878 benign URLs
 - 300 malicious URLs
 
-There is also a dedicated hard-negative benign file:
+There is also a separate held-out hard-negative evaluation set containing 21 benign URLs excluded from training.
 
-- `backend/data/raw/official_hard_negatives.csv`
+There are also dedicated hard-negative benign files:
 
-This file contains official, legitimate URLs from sign-in, security, verification, account recovery, and support pages on trusted domains such as Google, GitHub, Microsoft, Apple, PayPal, Dropbox, Adobe, AWS, Atlassian, and Amazon Pay. These are intentionally "phishy-looking" but safe, which makes them useful for reducing false positives.
+- `backend/data/raw/official_hard_negatives_train.csv`
+- `backend/data/evaluation/official_hard_negatives_eval.csv`
+
+These files contain official, legitimate URLs from sign-in, security, verification, account recovery, and support pages on trusted domains such as Google, GitHub, Microsoft, Apple, PayPal, Dropbox, Adobe, AWS, Atlassian, and Amazon Pay. These are intentionally "phishy-looking" but safe, which makes them useful for reducing false positives. The evaluation file is excluded from training so false-positive results are measured on held-out URLs.
 
 Benign URLs come from legitimate, traceable sources:
 
@@ -216,7 +220,7 @@ python backend\src\evaluate_model.py
 
 By default, this evaluates:
 
-- `backend/data/raw/official_hard_negatives.csv`
+- `backend/data/evaluation/official_hard_negatives_eval.csv`
 
 You can also evaluate any labeled CSV:
 
@@ -260,14 +264,14 @@ The current detector now combines:
 - lightweight page heuristics such as password fields, hidden iframes, suspicious page text, external script count, and simple brand/domain mismatch cues collected by the extension after load
 - optional reputation signals from VirusTotal when `VIRUSTOTAL_API_KEY` is configured
 
-The current deployed model is **Gradient Boosting**, selected after model comparison because it outperformed the other tested baselines while keeping hard-negative benign false positives at `0%`.
+The current deployed model is **Gradient Boosting**, selected after model comparison because it outperformed the other tested baselines while keeping held-out hard-negative benign false positives at `0%`.
 
 The Chrome extension currently uses:
 
 - a `high` risk threshold of `0.90` for blocking
 - a `medium` risk threshold of `0.70` for caution warnings
 
-These thresholds were chosen to preserve `0%` hard-negative benign false positives while maintaining strong malicious recall during threshold analysis.
+These thresholds were chosen to preserve `0%` held-out hard-negative benign false positives while maintaining strong malicious recall during threshold analysis.
 
 Common DOM signals such as hidden iframes are treated as supporting evidence only. They can raise a result to caution, but they do not create a high-risk block by themselves unless stronger URL evidence or external reputation evidence also supports the decision.
 

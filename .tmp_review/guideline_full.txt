@@ -1,0 +1,2125 @@
+
+--- PAGE 1 ---
+ 1 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+GUIDELINES  
+FOR  
+TPR 6313 FINAL YEAR PROJECT 1 
+&  
+TPR 6323 FINAL YEAR PROJECT 2 
+ 
+ 
+ 
+ 
+ 
+Faculty of Information Science & Technology 
+Multimedia University 
+ 
+ 
+Updated in October 2024 
+(Version 4.1)
+
+
+--- PAGE 2 ---
+ 
+ i 
+ 
+ 
+ 
+NOTICE 
+ 
+ 
+PLAGIARISM IS A SERIOUS OFFENCE 
+ 
+Copying materials from websites or any other sources for the report Final Year 
+Project (FYP) contents is prohibited. 
+ 
+You must sign the FYP report submission declaration form to confirm that your FYP 
+report has been completed by your own effort without any plagiarism 
+ 
+ 
+
+--- PAGE 3 ---
+ 
+ ii 
+TABLE OF CONTENTS 
+ 
+NOTICE i 
+LIST OF TABLES v 
+LIST OF FIGURES vi 
+LIST OF APPENDICES vii 
+ 
+CHAPTER 
+1 INTRODUCTION 8 
+1.1 The Final Year Project 8 
+1.2 Selecting a Project Title 9 
+1.3 Proposing a Project Title 11 
+2 PROJECT SCHEDULE 12 
+2.1 Overview 12 
+2.2 TPR 6313 Final Year Project 1 12 
+2.2.1 Important Events for FYP 1 13 
+2.3 TPR 6323 Final Year Project 2 13 
+2.3.1 Important Events for FYP 2 14 
+2.4 FYP Timeline 14 
+3 GRADING AND ASSESSMENT 15 
+3.1 Grade Distribution 15 
+3.2 Assessment 21 
+4 REPORT CONTENT AND SUBMISSION 23 
+4.1 Warning Notice 23 
+4.2 Content of FYP Report 23 
+4.2.1 Cover 23 
+4.2.2 Title Page 23 
+4.2.3 Copyright Page 24 
+4.2.4 Declaration Page 24 
+4.2.5 Acknowledgement 24 
+4.2.6 Table of Contents 24 
+
+--- PAGE 4 ---
+ 
+ iii 
+4.2.7 Abstract 24 
+4.2.8 List of Tables 24 
+4.2.9 List of Figures 25 
+4.2.10 List of Abbreviations/ Acronyms/ Notation 
+/Symbols (if applicable) 25 
+4.2.11 List of Appendices 25 
+4.2.12 Main Content (Body of the Report) 25 
+4.2.13 References 27 
+4.2.14 Appendices 27 
+4.3 Main Content of Interim/ Final Report 27 
+4.3.1 Chapter: Introduction (Interim/ Final Report) 27 
+4.3.2 Chapter: Background and Literature Search 
+(Interim/ Final Report) 28 
+4.3.3 Chapter: Methodology (Interim/ Final Report) 28 
+4.3.4 Chapter: Implementation Plan / Design (Interim 
+Report only) 28 
+4.3.5 Chapter: Solution (Final Report only) 28 
+4.3.6 Chapter: The Implementation Process/Results 
+(Final Report only) 28 
+4.3.7 Chapter: Testing / Evaluation of findings (Final 
+Report only) 29 
+4.3.8 Chapter: Conclusion (Interim/ Final Report) 29 
+4.3.9 Technical Paper (Final Report only) 29 
+4.4 Submission of Interim Report (TPR 6313 FYP 1) 29 
+4.5 Submission of Final Report for Evaluation (TPR6323 FYP 2)
+ 30 
+4.6 Submission of FYP Finalised Report after Approval (TPR6323 
+FYP 2 Only) 30 
+4.7 Penalties and Failures 31 
+4.7.1 Late Submission 31 
+4.7.2 Plagiarism 31 
+4.7.3 Absence for Presentation 31 
+5 REPORT PREPARATION 32 
+
+--- PAGE 5 ---
+ 
+ iv 
+5.1 Report Specification 32 
+5.1.1 Text 32 
+5.1.2 Language 32 
+5.1.3 Paper 32 
+5.1.4 Printing 32 
+5.1.5 Binding Type 33 
+5.1.6 Soft Cover 33 
+5.1.7 Hard Cover 33 
+5.1.8 Spine 33 
+5.1.9 Length of Report 33 
+5.1.10 CD/ DVD Label and Envelope 34 
+5.2 Content Layout and Text Formatting 34 
+5.2.1 Page Margins 34 
+5.2.2 Page Numbers 34 
+5.2.3 Typesetting 34 
+5.2.4 Chapter Numbering 35 
+5.2.5 Spacing 35 
+5.2.6 Paragraph 35 
+5.2.7 Numbers 36 
+5.2.8 Equation 36 
+5.2.9 Table 37 
+5.2.10 Figures 37 
+5.2.11 Reference 38 
+5.2.12 Appendices 39 
+5.3 Documentation Template and Layout Example 40 
+6 AWARDS, EXHIBITIONS AND CONFERENCES 41 
+6.1 Awards/ Competition 41 
+6.2 Exhibition/ Expo 41 
+6.3 Proceedings Conference 42 
+7 PITFALLS AND PROBLEMS 43 
+7.1 Problems 43 
+APPENDICES 45 
+
+--- PAGE 6 ---
+ 
+ v 
+LIST OF TABLES 
+ 
+Table 3.1: Grade Distribution for FYP 1 and FYP 2 15 
+Table 3.2: Evaluation Criteria for TPR6313 FYP 1 16 
+Table 3.3: Evaluation Criteria for TPR6323 FYP 2 19 
+ 
+ 
+ 
+ 
+  
+
+--- PAGE 7 ---
+ 
+ vi 
+LIST OF FIGURES 
+ 
+Figure 5.1: Example of Chapter Numbering 35 
+Figure 5.2: Example of Equation in Text 36 
+Figure 5.3: Example of Table in Text 37 
+Figure 5.4: Example of Figure in Text 38 
+Figure 5.5: Example of Reference 39 
+ 
+ 
+ 
+ 
+
+--- PAGE 8 ---
+ 
+ vii 
+LIST OF APPENDICES  
+ 
+Appendix A: FYP Meeting Log 46 
+Appendix B: Checklist for FYP Interim Submission 47 
+Appendix C: Checklist for FYP Final Report Submission 48 
+Appendix D: Layout for the Cover of the Interim/ Final 
+Report/ Hard-Cover 49 
+ Appendix E: Layout of Spine of the Final Report (Hard 
+Cover only) 50 
+Appendix F: Layout of Title Page of the Interim/ Final 
+Report 51 
+Appendix G: Layout of Copyright Page of the Interim/ Final 
+Report 52 
+Appendix H: Layout of Declaration Page of the Final Report 
+(Soft Cover Interim/ Final Report for 
+evaluation) 53 
+Appendix I: Layout of Declaration Page of the FYP 2 - 
+FINALISED Report 54 
+Appendix J: Sample of Soft Cover Interim/ Final Report for 
+evaluation 55 
+Appendix K: Sample of Hard Cover Final Report (Front) 56 
+Appendix L: Layout of CD/ DVD envelope 57 
+ 
+ 
+ 
+
+--- PAGE 9 ---
+ 
+ 8 
+CHAPTER 1 
+ 
+1 INTRODUCTION 
+ 
+1.1 The Final Year Project 
+ 
+The two-trimester Final Year Project 1 and 2 is one of the most important parts 
+of the undergraduate studies.  With heavy credit hours, the FYP subject will be one of 
+the most essential  and most time -consuming, taking up many hours over two -
+trimesters.  Why is this activity so important that it is worth spending all this time, and 
+why is it a required part of the FIST undergraduate program?  The answer is that 
+information science and technology are both a theoretical and an empirical, hands-on 
+discipline, and there are many skills that simply cannot be taught in the classroom.  
+They can only be learned through practical experience, such as, working on a large 
+project that exposes you to some of these important ideas, such as: 
+ 
+• Interacting with users .  With most classroom projects students are given a 
+problem and told to solve it. In the real world, however, problem statements 
+are not given out in a finished form. Students must develop the problem 
+statement through meetings and discussions with potential users of their 
+software. 
+ 
+• Developing specification and design documents. In Software Engineering 
+or Software Analysis and Design subjects, students learned formal methods for 
+representing specification and design documents. However,  an assignment or 
+project developed in class is usually too small to demonstrate their real benefits. 
+That is not the case with the final year project. It involves the development of 
+a large, complex software package that requires the effective use of software 
+development tools. Without these formal design and implementation methods, 
+the scale of the project will quickly overwhelm the student. 
+ 
+• Implementing project . There are two types of projects classified by the 
+faculty; 
+
+--- PAGE 10 ---
+ 
+ 9 
+ 
+▪ Application based project: 
+Must include but not limited to development of new or improvement of 
+existing system, framework design, implementation, coding , development 
+techniques and methods, working prototype and usability studies from test 
+data or survey.  
+ 
+▪ Research based project:  
+Must include but not limited to proof of concept and novelty, either new 
+algorithms or enhancement of ideas supported by information technology 
+related data or laboratory data or lab simulation or lab prototype, model or 
+publication. 
+ 
+• Improving writing and oral presentation skills . Two fundamentally 
+important parts of the project are the student’s written documents   and the oral 
+presentations. At the end of FYP 1, the student will deliver an Interim Report 
+and demonstrate the prototype or research work . At the end of FYP 2 , the  
+student will produce a Final Report and present his/ her work. 
+ 
+There is much more to a final year project than simply “writing lots of code”  
+or “experimenting with data” or “writing lots of text”. Instead, it is a chance to put into 
+practice all the concepts that, until now, have only been studied formally.  By the end 
+of the project students will have developed a set of practical skills that will serve them 
+well throughout their professional career.  
+ 
+1.2 Selecting a Project Title 
+ 
+The first step, the student has  to pick a project title that he/she would enjoy working 
+on. The projects offered may vary substantially in breadth, depth and degree of 
+difficulty. The most important thing is to shortlist a set of projects that are right for 
+you. Some students are better suited to well -defined and relatively safe projects that 
+provide scope for demonstrating proficiency with a low risk of failure. Other students 
+are better advised to tackle harder, riskier projects that require a high degree of original 
+input and/or technical problem solving. If you are looking to achieve high marks in the 
+
+--- PAGE 11 ---
+ 
+ 10 
+project and, particularly, if you are hoping to win one of the illustrious projects prizes, 
+or achieve "Distinguished Project" status, you should choose your shortlist with 
+particular care.  
+ 
+A list of project titles will be released on the FYP website at least one month 
+prior to the first of FYP 1. During this period, student s can approach the supervisors 
+to obtain more detail information about the title listed. The potential supervisors will 
+be happy to offer advice on the suitability of a project, given your individual 
+background, strengths and ambitions. Once the supervisor agree s to supervise the 
+student, the student shall request the supervisor to sign the FYP Requisition form and 
+submit the form to faculty office. 
+ 
+It is important to balance ambition and realism when making a choice.  Start 
+thinking about possible topics and titles well before the course begins.  Consider ideas 
+that sound interesting because of a desire to know more about a subject, a desire to 
+learn how to use a particular software package, or a goal of working professionally in 
+this area after graduation.  Perhaps you would like to investigate a research idea 
+presented in one of your classes.  Whatever the reason, the project topic should be 
+something that you choose rather than something assigned to you.  It is much more 
+enjoyable to put in time on a project if it is yours rather than someone else’s.  Start by 
+reading technical books, journal papers, professional articles, or interesting web pages.  
+Talk with faculty and other professionals  - perhaps people you are working with for 
+industrial training.  Your goal is to have a well -defined problem statement ready for 
+review as early as possible. 
+ 
+
+--- PAGE 12 ---
+ 
+ 11 
+1.3 Proposing a Project Title 
+ 
+Student may propose a project title with the following conditions: 
+ 
+• Company-link project. There must be a mentor from the company to supervise 
+the project. The company  supervisor must agree with MMU copyright term 
+(stated in the student thesis). 
+• Project to be participated in competition. The project must be related to the 
+theme of the competition. 
+• Potential project. The project may create or bring significant improvement to 
+individual, organisation or society.    
+ 
+ Note that, student must find  a potential faculty supervisor to supervise his/ her 
+proposed title. Student must obtain approval for his /her  project proposal from the 
+faculty before the beginning of FYP 1. 
+ 
+  
+
+--- PAGE 13 ---
+ 
+ 12 
+ 
+2 PROJECT SCHEDULE 
+ 
+2.1 Overview 
+ 
+The project schedule described in this chapter is only valid for long -long 
+trimesters or two long trimesters, otherwise, the project will be considered as special 
+case FYP that carried out in short-long or long-short trimesters. For special case FYP, 
+student has to follow the FYP Timeline provided by the faculty and not the project 
+schedule described in this chapter. 
+ 
+2.2 TPR 6313 Final Year Project 1  
+ 
+FYP 1 is concerned with developing the problem specification and design. The 
+progress on these activities will be monitored through regular weekly meetings with 
+your supervisor. The requirement for FYP 1 registration is student must complete 
+at least 60 credits hours (excluding art & humanity subjects).  
+ 
+By the second week of the trimester students must have a short, written 
+description of the project.   Then, for the next 11 weeks, a complete and precise 
+problem statement need s to be developed, followed by the formal design of an 
+experimental system that solves this problem. In addition, students must also prepare 
+an implementation plan that will guide their activities in FYP 2 and build a working 
+prototype that demonstrates the functionality of the students  proposed research/ 
+software.   
+ 
+At the end of Week 11, students are required to produce two “deliverables.”  
+The first is the Interim Report (Week 11) describing what you have done.  This 
+includes literature search, methodology, interviews, market surveys, statistical 
+analysis as well as the completed specifications a nd design . Following are the 
+important events highlighted for FYP 1. 
+
+--- PAGE 14 ---
+ 
+ 13 
+2.2.1 Important Events for FYP 1 
+ 
+• Before Week 1 
+▪ Students view the list of FYP titles and information.  
+▪ Students select the FYP titles and approach respective supervisor.  
+▪ Students register the FYP subject in ICEMS. 
+• Week 1 
+▪ Supervisor assign student to project. 
+▪ Students submit the FYP title requisition form to faculty office.  
+▪ Student attend FYP briefing. 
+• Week 1 - 11 
+▪ Students carry out FYP activities e.g. literature review, planning, 
+analysis and design, interim report etc. 
+▪ Students meet the supervisor at least once a week. A meeting log must 
+be completed by each student for each meeting. 
+• Week 12 
+▪ Students submit the Interim Report, and students must make sure that 
+their report follows the formatting requirements (e.g. layout, font size, 
+references, etc).  
+▪ Students arrange the presentation time slot with supervisor. 
+• Weeks 13 - 14 
+▪ Project presentation and demonstration of the prototype or research 
+work.  
+ 
+2.3 TPR 6323 Final Year Project 2  
+ 
+FYP 2 is concerned with experiment or system implementation as well as the 
+research contribution of the project.  Students’ tasks are to take the specification and 
+design work done during the previous trimester and construct a finished, working 
+system that meets all specifications. Students will again meet weekly with their 
+supervisor to describe the project activ ities and detail its progress. Students  have 11 
+weeks to complete the implementation.  In Week 12, the student is required to submit 
+the Final Report  with a technical report as appendix and give a presentation and 
+
+--- PAGE 15 ---
+ 
+ 14 
+demonstration on Week 13 and 14 of the completed system or result to the supervisor 
+and moderators. Following are the important events highlighted for FYP 2. 
+ 
+2.3.1 Important Events for FYP 2 
+ 
+• Week 1 
+▪ Student re-register the FYP subject. 
+• Week 1 - 11 
+▪ Students carry out FYP activities e.g. core results/ findings of the 
+project, coding, testing, implementation, final report and etc. 
+▪ Students meet the supervisor at least once a week. A meeting log must 
+be completed by each student for each meeting.   
+• Week 12 
+▪ Students submit the Final Report (for evaluation) and make sure your 
+report follows the formatting requirements (e.g. layout, font size, 
+references, etc).  
+▪ Students arrange the presentation time slot with supervisor. 
+• Week 13 - 14 
+▪ Project presentation and demonstration of the prototype or research 
+works.  
+• Week 15 - 16 
+▪ Submit the finalised Final Report. 
+ 
+2.4 FYP Timeline 
+ 
+The FYP Timeline shows the important activities that will be carried out in 
+FYP 1 and 2. The student must be aware of the important activities highlighted in the 
+timeline. The FYP Timeline is provided separately in the faculty FYP website. 
+  
+
+--- PAGE 16 ---
+ 
+ 15 
+ 
+3 GRADING AND ASSESSMENT 
+ 
+3.1 Grade Distribution 
+ 
+Each student will be required to passed Final Year Project (FYP) 1 (TPR6313) 
+to take FYP 2 (TPR6323). Student’s activities in FYP 1 will be evaluated as Pass/Fail 
+subject and FYP 2 will be graded in GPA/ CGPA calculation. The following chart 
+describes the marks and final percentage distribution for FYP 1 and 2: 
+ 
+Table 3.1: Grade Distribution for FYP 1 and FYP 2 
+TPR6313 FYP 1 TPR6323 FYP 2 
+Components Marks in % Components Marks in % 
+Continuous assessment 
+Observation 30 Observation 30 
+Presentation 10 Presentation 10 
+Final Assessment 
+Interim Report 20 Final Report 10 
+Project Design 40 Project 
+Implementation 
+50 
+Total Marks 100 Total Marks 100 
+Type Pass/ Fail Type Graded in 
+GPA/ CGPA 
+ 
+The descriptions for each evaluation component and rubrics can be 
+downloaded in the FYP website with filename: FYP evaluation criteria . The 
+summary of the assessment and criteria are shown in Table 3.2 and Table 3.3. 
+
+--- PAGE 17 ---
+ 
+ 16 
+Table 3.2: Evaluation Criteria for TPR6313 FYP 1 
+Assessment Criteria 
+Observation 
+(30%) 
+ 
+Continuous 
+assessment 
+Planning & Organising (Meeting Log) 
+• Student surpasses the plan/schedule to complete 
+the FYP without supervisor guidance and have at 
+least 5 meeting logs that are thorough/detailed. 
+Understanding Of Tasks/Objectives 
+• Student can make good improvements on the 
+tasks/objectives for the FYP without supervisor 
+guidance. 
+Learning Skills 
+• Student’s learning ability surpasses the 
+technical/non-technical requirements of FYP 
+tasks without supervisor guidance. 
+Analysis & Problem Solving 
+• Student can troubleshoot/solve ingeniously the 
+problems faced in FYP tasks without supervisor 
+guidance. 
+Discipline & Ethical Behaviour 
+• Student surpasses the handling of 
+deadlines/rules/expected decency in completing 
+the FYP without supervisor guidance. 
+Library Literacy Course (LLC) 
+• Student attended the LLC and can implement 
+well the lesson learned without supervisor 
+guidance. 
+ 
+Presentation 
+(10%)   
+ 
+Continuous 
+assessment 
+Knowledge and methodology on the topic 
+• Displayed an excellent grasp of the research 
+topic. Demonstrated excellent mastery of 
+content, application and implications. Excellent 
+research depth across range of resources through 
+complex IT project activities. 
+Critical Thinking on expected outcome, analysis and 
+conclusion 
+• Displays excellent project outcome and include 
+extensive elaboration and critical explanation to 
+the presented outcome 
+ 
+Interim Report 
+(20%) 
+ 
+Final assessment 
+Structure and organisation 
+• The report is exceptionally well-organized and 
+structured logically. It has a clear introduction, 
+well-defined sections, and a coherent flow. 
+Formatting of the report 
+• The report is exceptionally well-formatted, fully 
+adhering to all given formatting guidelines, and 
+enhancing professionalism and readability. 
+Citation and reference 
+
+--- PAGE 18 ---
+ 
+ 17 
+• Citations and references are precise, reflecting 
+thorough research and perfect adherence to APA 
+style guidelines. 
+Spelling and grammar 
+• The report is free from spelling and grammar 
+errors, ensuring clarity and professionalism. 
+ 
+Project Design 
+(40%) 
+ 
+Final assessment 
+Introduction 
+• Exceptionally introduces the project/research 
+topic with precision and insight. Provides 
+comprehensive background information to 
+provide context. 
+Problem statement and objectives 
+• The problem is clearly identified and 
+convincingly justified by evidence, indicating a 
+comprehensive understanding of the problem. 
+Relevant and achievable objectives are precisely 
+defined. 
+Literature review 
+• An exhaustive set of sources reviewed. All 
+sources are highly relevant. Identification of 
+missing gaps is not only clear and well-
+supported but also includes an explanation of the 
+significance of these gaps for the 
+research/project. 
+Methodology and planning 
+• Exceptionally clear and relevant research/project 
+directions that are closely aligned with the 
+identified gaps in the literature review. The 
+chosen methodology is not only clearly 
+explained and justified but also demonstrates a 
+deep understanding of potential challenges and 
+limitations. Planning is well-structured, with 
+precise milestones and a comprehensive Gantt 
+chart that accounts for potential contingencies. 
+Software or research design 
+• Presents an outstanding software or research 
+design that is highly detailed and 
+comprehensive. The design consists of all 
+necessary design components. Demonstrates 
+exceptional consideration for important design 
+choices. 
+Preliminary result/ critical discussion/ prototype 
+• Result/ discussion/ prototype is thoroughly and 
+critically presented to ICT complex problems, 
+which covers all the component parts or sub-
+problems. 
+Conclusion and future work 
+• Conclusion is thoroughly and critically presented 
+to objective and well supported by 
+
+--- PAGE 19 ---
+ 
+ 18 
+results/findings with significant improvements 
+for future works. 
+Overall technical quality of the project 
+• Technical details are thoroughly and critically 
+presented and fully supported by details and/or 
+clarifying information which enhances 
+understanding. Student is able to solve all 
+technical problems independently 
+ 
+ 
+  
+
+--- PAGE 20 ---
+ 
+ 19 
+Table 3.3: Evaluation Criteria for TPR6323 FYP 2 
+Assessment Criteria 
+Observation 
+(30%) 
+ 
+Continuous 
+assessment 
+Planning & Organising (Meeting Log) 
+• Student surpasses the plan/schedule to complete 
+the FYP without supervisor guidance and have 
+at least 6 meeting logs that are 
+thorough/detailed. 
+Technical Skills 
+• Student surpasses the technical skills required to 
+complete FYP tasks without supervisor 
+guidance. 
+Motivation, Responsiveness & Flexibility 
+• Student demonstrates exceptional continuous 
+effort and adapts quickly to changes in FYP 
+tasks without supervisor guidance. 
+Analysis & Problem Solving 
+• Student can troubleshoot/solve ingeniously the 
+problems faced in FYP tasks without supervisor 
+guidance. 
+Discipline & Ethical Behaviour 
+• Student surpasses the handling of 
+deadlines/rules/expected decency in completing 
+the FYP without supervisor guidance. 
+Innovation & Entrepreneurship 
+• Student demonstrates excellent ingenuity in FYP 
+tasks and very strong entrepreneurship-oriented 
+outcome without supervisor guidance. 
+Presentation 
+(10%)   
+ 
+Continuous 
+assessment 
+Knowledge and methodology on the topic 
+• Displayed an excellent grasp of the research 
+topic. Demonstrated excellent mastery of 
+content, application and implications. Excellent 
+research depth across range of resources through 
+complex IT project activities. 
+Prototype demonstration/ research report presentation 
+• Prototype demonstration or research report 
+presentation is outstanding, showcasing a highly 
+innovative and well-executed project with 
+flawless communication and engagement. 
+Critical Thinking on outcome, analysis, results and 
+conclusion 
+• Displays excellent project outcome and include 
+extensive elaboration and critical explanation to 
+the presented outcome 
+Final Report 
+(10%) 
+ 
+Final assessment 
+Structure and organisation 
+• The report is exceptionally well-organized and 
+structured logically. It has a clear introduction, 
+well-defined sections, and a coherent flow. 
+Formatting of the report 
+
+--- PAGE 21 ---
+ 
+ 20 
+• The report is exceptionally well-formatted, fully 
+adhering to all given formatting guidelines, and 
+enhancing professionalism and readability. 
+Citation and reference 
+• Citations and references are precise, reflecting 
+thorough research and perfect adherence to APA 
+style guidelines. 
+Spelling and grammar 
+• The report is free from spelling and grammar 
+errors, ensuring clarity and professionalism. 
+Project 
+Implementation 
+(50%) 
+ 
+Final assessment 
+Improvement made after FYP 1 (abstract, introduction, 
+problem statement, objectives, literature, methodology and 
+planning, software/ framework design and prototype (if 
+any)) 
+• Excellent improvement has been made on the 
+report with additional literature added with 
+critically evaluates relevant sources and improve 
+on methodology content 
+Objectives met 
+• All objectives have been not only met but 
+surpassed with outstanding results. Exceptional 
+creativity, innovation, and/or resourcefulness 
+were demonstrated in achieving objectives. The 
+achievement of objectives has had a significant 
+and positive impact on the overall project or 
+task. 
+Project implementation/ experimental setup 
+• The project implementation or experimental 
+setup is executed flawlessly with meticulous 
+attention to detail. All components are 
+exceptionally well-organized, demonstrating an 
+exceptional level of precision and planning. 
+Advanced techniques, cutting-edge technology, 
+or innovative methods are employed, resulting in 
+outstanding results. 
+Project testing and prototype or research methods/ 
+techniques/ algorithm/ experimental evaluation and result 
+and critical discussion 
+• The project testing, methods, techniques, or 
+algorithm evaluation is conducted flawlessly 
+with an exceptional level of rigor and precision. 
+The evaluation design is highly sophisticated 
+and comprehensive, demonstrating advanced 
+knowledge and creativity. Results are 
+exceptional, showcasing groundbreaking 
+insights or achievements in the field. 
+Conclusion and future work 
+• Conclusion is thoroughly and critically 
+presented to objective and well supported by 
+
+--- PAGE 22 ---
+ 
+ 21 
+results/findings with significant improvements 
+for future works. 
+Overall technical quality  
+• Technical details are thoroughly and critically 
+presented and fully supported by details and/or 
+clarifying information which enhances 
+understanding. Student can solve all technical 
+problems independently 
+Completeness of the application-based or research-based 
+project 
+• The project, whether application-based or 
+research-based, is exceptionally complete, fully 
+addressing all aspects, objectives, and 
+requirements with outstanding quality. 
+Technical paper (Discuss with your respective supervisor 
+for format details and requirement) 
+• Content is highly organized, illustrating the 
+overall argument with finer details. Show strong 
+links of the paragraphs to the argument and 
+future directions. Includes strong observation 
+relevant to argument. 
+ 
+3.2 Assessment 
+ 
+The supervisor and moderator/panel will assess the student’s performance for 
+each criterion in 6 levels (0-5) as described below: 
+ 
+• 5  Excellent: The student’s performance is well beyond expectation  
+• 4  Very Good: The student’s performance is above expectation at his/her  
+• 3  Adequate: The student’s performance is acceptable and expected at his/her level 
+• 2  Inadequate: The student’s performance is below expectation 
+• 1  Poor: The student’s performance is extremely below expectations.  
+• 0  Very Poor: No evidence of work.  
+ 
+In order to be graded as excellent for an application-based project, the student 
+will have to develop an impressive/ novel application with fully functional components, 
+various unique features, excellent coding style and file structures , adopt proper 
+software development techniques and methods, accompanied with excellent 
+documentation and most importantly the project has to be demonstrable to the public 
+and suitable to for participation in competition s and exhibition s. Students who 
+
+--- PAGE 23 ---
+ 
+ 22 
+obtained a distinction grade for his/ her project must participate in an exhibition or 
+competition if requested by the supervisor or faculty.  
+OR 
+For an excellent research based project, the student has to show their quality of 
+research work at the highest level of undergraduate studies by providing an in-depth 
+literature review, developed novel algorithms , new breakthrough, enhancement of 
+ideas or framework that is supported by excellent experimental results using 
+benchmark  and standard database, strong proof of concept through surveys, statistics 
+or laboratory prototype and has the potential to generate at least one local/ international 
+conference/ journal publication. 
+AND 
+ The FYP supervisors are required to run the FYP report through the plagiarism 
+checking software approved by the University (Turnitin). The similarity index for each 
+chapter shall not exceed 1 0%.  Should the similarity index be more than 1 0%, the 
+supervisors are required to provide the justifications.  
+ 
+ The similarity index checking must be performed with below requirement: 
+ 
+  
+ All A+/A/A- projects must fulfil the requirement of not more than 1 0% 
+Similarity Index by chapter.  
+ 
+ FYP report with Similarity Index more than 1 0% by chapter, should only 
+entitle the highest, grade B+. FYP Committee decision is FINAL. 
+ 
+  
+
+
+--- PAGE 24 ---
+ 
+ 23 
+ 
+4 REPORT CONTENT AND SUBMISSION 
+ 
+4.1 Warning Notice 
+ 
+TAKE NOTICE that the unauthorized copying, reproducing, sharing and /  or 
+downloading of any copyrighted material or an attempt to do so whether by use of the 
+University’s facilities or outside networks / facilities whether in hard copy or soft copy 
+format, shall constitute an infringement under the Copyright Act 1987 and sh all be a 
+strict liability offence. 
+ 
+4.2 Content of FYP Report 
+ 
+This section describes the general content structure of the undergraduate FYP 
+report. It covers information on the arrangement of the report, content and chapters. 
+The FYP report will be rejected if the report is not presented in the form required in 
+this guide. 
+ 
+4.2.1 Cover 
+  
+The cover of the report must contain (in order) the title of the FYP, student’s 
+full name, session, name of faculty, Multimedia University and the month and year of 
+submission. For the hard cover of the Final Report, all letters must be printed in 
+boldface (gold) capital letters. The minimum size for the letter is 5mm in height. Refer 
+to example in Appendix A. The hard copy cover must be in dark blue as shown in 
+Appendix K. 
+ 
+4.2.2 Title Page  
+ 
+The cover of the report must contain  (in order) title of the FYP, student’s full 
+name, session, statement of fulfilment, name  of faculty, Multimedia University and 
+the month and year of submission date. Refer Appendix F. 
+
+--- PAGE 25 ---
+ 
+ 24 
+4.2.3 Copyright Page  
+ 
+Student MUST follow and complete the copyright page according to the 
+content and format shown in . 
+ 
+4.2.4 Declaration Page  
+ 
+Students MUST declare with signatures stating the report has been done by 
+them and no plagiarism has been included. Please refer to Appendix H  for blue cover 
+submission, and Appendix H1 for finalised submission. 
+ 
+4.2.5 Acknowledgement 
+ 
+Student may acknowledge  the assistance of  various individuals or 
+organisations in successful completion of the FYP. The content of this section shall 
+not exceed one page. 
+ 
+4.2.6 Table of Contents 
+ 
+This page should contain a list of chapters, sub-titles and referred page number 
+of the report. 
+ 
+4.2.7 Abstract 
+ 
+In one or two pages, certainly not more than two, summarize the main features 
+of the project, what problem it is solving and how the student proposes to solve it. This 
+brief overview should give a snapshot of the overall structure of the FYP. 
+ 
+4.2.8 List of Tables 
+ 
+This page must list all the tables described in the project report together with 
+the table numbers, labels and page numbers. 
+ 
+
+--- PAGE 26 ---
+ 
+ 25 
+4.2.9 List of Figures 
+ 
+This page must list all the figures described in the project report together with 
+the figure numbers, labels and page numbers. 
+ 
+4.2.10 List of Abbreviations/ Acronyms/ Notation /Symbols (if applicable) 
+ 
+All abbreviations, acronyms, notation and symbols described  in the project 
+report should be listed on this page according to alphabetical order, together with their 
+definitions or names. 
+ 
+4.2.11 List of Appendices 
+ 
+This page must list all the appendices in the project report together with the 
+appendix number, labels and page numbers. 
+ 
+4.2.12 Main Content (Body of the Report) 
+ 
+The main content of the report should be divided into  appropriate chapters. 
+Each chapter must begin on a new page. The title of each ch apter must be provided 
+and related to the main content. A chapter must contain sections with appropriate sub-
+titles and numbers. The body of the report must be written in paragraphs that describe 
+information relevant to the title or sub -title. There must be continu ity flow between 
+two paragraphs and long paragraphs should be avoided.  
+ 
+Student should adopt the appropriate body of the Interim Report in FYP 1 and 
+body of the Final Report in FYP 2. Following are suggested main content s for each 
+report. 
+
+--- PAGE 27 ---
+ 
+ 26 
+• Suggested Contents of Interim Report (FYP 1) 
+o Chapter 1: Introduction – objectives, scopes 
+o Chapter 2: Literature Review 
+o Chapter 3: *Methodology and planning 
+o Chapter 4: *Software / research design 
+o Chapter 5: *Preliminary result/ critical discussion/ prototype 
+o Chapter 6: Conclusion 
+ 
+• Suggested Contents of Final Report (FYP 2) 
+o Chapter 1: Introduction – objectives, scopes 
+o Chapter 2: Literature Review 
+o Chapter 3: *Methodology 
+o Chapter 4: *The Solution (Complete expansion) 
+o Chapter 5: *The Implementation Process/Results 
+o Chapter 6: *Testing / Evaluation of findings 
+o Chapter 7: Conclusion  
+ 
+ Note that, the suggested contents  with (*)  above can be modified. Student 
+MUST consult the supervisor for suitable chapter title and content of the report. 
+ 
+There should be continuity link between the Interim Report and the Final 
+Report. The content described in Interim Report such as objectives, methodology, plan 
+and design must be met, carried out and reported in Final Report . Otherwise, the 
+student has to report the changes of plan  and provide appropriate support and 
+justification in the Final Report.  The detail description for each chapter is described 
+in Section 4.3. 
+ 
+In a formal report, the use of first-person reference such as “I”, “us” , “me”, 
+“myself” and etc.  in the main content should be avoided. In situation where self -
+reference is required, the self- reference could be made as “this study”, “this project”, 
+“this research” or “the author”. Student must adopt an appropriate English writing  
+level. Student must pay attention to correct spelling, grammar, punctuation, sentence 
+structure and continuity.  
+ 
+
+--- PAGE 28 ---
+ 
+ 27 
+4.2.13 References 
+ 
+All references of papers, journals, websites, tools, material, books, software 
+and reference materials that the student has referred to within the report must be listed 
+alphabetically and chronologically in this section following American Psychological 
+Association (APA) style. Student must cite the references at the appropriate places in 
+the content of the report  where required. Students are encourage to use Mendeley 
+(https://www.mendeley.com/) or Zotero ( https://www.zotero.org/) for organising 
+and citing the reference materials. 
+ 
+4.2.14 Appendices 
+ 
+Appendices are a dditional materials to the body of the report . The items in 
+appendices include charts, graphics, display, essential program codes, screen shots, 
+table, diagram and other items that may be too lengthy and inconvenient to be included 
+in the body of the report. For example, the survey questionnaires and data sheets may 
+be included as appendices. All the appendices must be listed in the List of Appendices 
+page. 
+ 
+4.3 Main Content of Interim/ Final Report 
+ 
+Brief information about the body of the report is described in section 4.2.12. 
+The following sections provide detail descriptions of the main content of Interim/ Final 
+Report.  
+ 
+4.3.1 Chapter: Introduction (Interim/ Final Report) 
+ 
+How did the problem originally present itself to you in the first place, and how 
+did it evolve over the course of the project. Give a detailed summary of the problem 
+as well as a review of the literature or the market survey.  
+ 
+ 
+ 
+
+--- PAGE 29 ---
+ 
+ 28 
+4.3.2 Chapter: Background and Literature Search (Interim/ Final Report) 
+ 
+Describe what you have discovered in your literature review. Does this 
+problem exist anywhere else? Who is working on it? How have others solved it? Give 
+references to some of the main articles/books/Web pages discussing this problem. 
+ 
+4.3.3 Chapter: Methodology (Interim/ Final Report) 
+ 
+Describe how the project work will be implemented. What methodology will 
+be used?  What tools and technique(s) will be employed? Describe the tools and 
+techniques in detail and justify why you choose it? For all the tools and techniques 
+used, give proper citation and references. 
+ 
+4.3.4 Chapter: Implementation Plan / Design (Interim Report only) 
+ 
+Outline in detail your approach to solving the problem using system 
+development diagrams, flowcharts and schematic diagrams. Lay out the project 
+implementation plan for the next semester. Discuss the project’s target and milestone 
+dates. If you will be implementing your project in discrete stages, describe them and 
+discuss how far you think you will be able to get. 
+ 
+4.3.5 Chapter: Solution (Final Report only) 
+ 
+Describe the design and solution in detail. Student may include the appendices 
+for essential computer code s, data sheet  or other technical materials, but some 
+summary or overview diagrams of the solution should be described in text and placed 
+in the body of the report. This will help the reader get a sense for the overall structure 
+of the solution. 
+ 
+4.3.6 Chapter: The Implementation Process/Results (Final Report only) 
+ 
+Describe the process you went through to complete the project and compare 
+what actually happened with the goals you were trying to achieve. Highlight any major 
+
+--- PAGE 30 ---
+ 
+ 29 
+variations from your original plans. Discuss the behaviour of the finished program, 
+and show some of its functionality. 
+ 
+4.3.7 Chapter: Testing / Evaluation of findings (Final Report only) 
+ 
+For the implemented systems and software, tests should be conducted, and their 
+results should also clearly be stated. 
+ 
+4.3.8 Chapter: Conclusion (Interim/ Final Report) 
+ 
+What has been accomplished for each research objective (Students should 
+clearly state the conclusion for each project objective) what are the major things that 
+you learned from this project? What work still needs to be done on the system and how 
+can it be improved and/or enhanced? Do you have any future plans for this software 
+package? 
+ 
+4.3.9 Technical Paper (Final Report only) 
+ 
+Student must consult the respective supervisor for suitable technical paper and 
+format for the project. For research projects, the technical paper can be a conference 
+or a journal paper. For application projects, the technical paper can be the user manual, 
+API manual, technical analysis report etc.  
+ 
+4.4  Submission of Interim Report (TPR 6313 FYP 1) 
+ 
+Student must submit the following items on Week 12 in FYP 1 to the FYP 
+Supervisor for evaluation. 
+ 
+1. SOFTCOPY (1 copy in PDF format & 1 copy in word format)  
+Interim Reports (Refer to FYP guideline (get from IPMS))). 
+2. Email/share to your supervisor: ZIP/Online Drive Folder  that 
+contains the softcopy of the project report, documents, codes, 
+installation files, required software, references, etc. However, the 
+supervisor can request student to print the report if needed. 
+
+--- PAGE 31 ---
+ 
+ 30 
+3. At least SIX (6) FYP Meeting Log sheets, including ONE from 
+Library Literacy Course Attendance (from the library) (Refer to 
+Appendix A in FYP guideline) attached as an appendix. The FYP 
+Meeting Log sheets must be signed and stamped by the supervisor. 
+4. The checklist for FYP interim report submission ( Appendix B). 
+ 
+4.5 Submission of Final Report for Evaluation (TPR6323 FYP 2) 
+ 
+Student has to submit the following items on Week 12 in FYP 2  to the FYP 
+Supervisor for evaluation. 
+ 
+1. SOFTCOPY (1 copy in PDF format & 1 copy in word format) 
+Final Reports (Refer to FYP guideline)). 
+2. Email/share to your supervisor: ZIP/Online Drive Folder that 
+contains the softcopy of the project report, documents, codes, 
+installation files, required software, references, meeting logs, FYP 
+report submission checklist, etc. However, the supervisor can request 
+student to print the report if needed. 
+3. At least SIX (6) FYP Meeting Log sheets (Refer to Appendix A in 
+FYP guideline) are attached as an appendix. The FYP Meeting Log 
+sheets must be signed and stamped by the supervisor.  
+4. The checklist for FYP final report submission (Appendix C). 
+ 
+4.6 Submission of FYP Finalised Report after Approval ( TPR6323 FYP 2 
+Only) 
+ 
+After the FYP 2 p resentation, student is  required to  consult and seek  for 
+approval from supervisor to submit the following items within 2 weeks to the faculty 
+via online form or drive. 
+ 
+• SOFTCOPY (1 copy in PDF format & 1 copy in word format) FYP 
+Finalised Report (Refer to FYP guideline)). However, the supervisor/ 
+faculty can request student to print the report if needed. 
+
+--- PAGE 32 ---
+ 
+ 31 
+• FYP title requisition form (signed by both student and the supervisor 
+before FYP 1 begins). 
+• The checklist for FYP final report submission (Appendix C in FYP 
+guideline).  
+• The signed & Stamped (By Supervisor & Panel) FYP Finalised 
+Report Submission Form. 
+• On the cover of the Final Report submission, the month of submission 
+shall follow accordingly.   
+• Failure to submit the SOFTCOPY FYP Finalised Report on time will 
+result in the TPR6326 FINAL YEAR PROJECT 2 mark being 
+incomplete with grade status "I".    
+ 
+4.7 Penalties and Failures 
+ 
+4.7.1 Late Submission 
+ 
+FIVE mark (5%) will be automatically deducted from the student project for 
+late submission (each day) of interim/ final/ finalised report. Therefore, students have 
+to ensure that they submit their FYP report on time.  Student who does not submit the 
+report for more than 5 days (including non -working days) after the submission due 
+date may result in automatic failures. 
+ 
+4.7.2 Plagiarism 
+ 
+Student who is caught to have plagiarized will be STRICTLY penalized and 
+may result in automatic failures. 
+ 
+4.7.3 Absence for Presentation  
+ 
+Student who does not present for presentation (without valid reason) may result 
+in automatic failures. 
+ 
+ 
+
+--- PAGE 33 ---
+ 
+ 32 
+CHAPTER 5 
+5 REPORT PREPARATION 
+ 
+5.1 Report Specification 
+ 
+The following describes the report specification. The printing of the hardcopy 
+of the soft/hard cover report (Section 5.1.3 to 5.1.10 and the relevant appendices) only 
+applicable if requested by the supervisor or the faculty. 
+ 
+5.1.1 Text 
+ 
+Use computer type written using word processor software. 
+ 
+5.1.2 Language 
+ 
+Use British (United Kingdom) English . Avoid the use of such as “I”, “us”, 
+“me”, “myself” and etc. in the main content of the report, except the conclusion chapter. 
+Use “this study”, “this project”, “this research” or “the author” in situation where self-
+reference is required. Student must adopt appropriate English writing level. Student 
+must pay attention to use correct spelling, grammar, punctuation, sentence structure, 
+continuity and etc. 
+ 
+5.1.3 Paper 
+ 
+Use only high-quality A4 80-gram paper, dimensions 210 mm x 297 mm. This 
+paper should be white in colour, acid free and “non-erasable”. 
+ 
+5.1.4 Printing  
+ 
+Print using high-quality laser or ink -jet printer. Use colour printing mode for 
+figures, diagrams etc. if applicable. Text and figure s must be legible and clear.  All 
+typing, print, illustrations, etc. should be on one side of the paper only. 
+ 
+
+--- PAGE 34 ---
+ 
+ 33 
+5.1.5 Binding Type 
+ 
+• Comb bind (Soft cover) 
+o Interim Report 
+o Final Report for evaluation  
+• Permanent bind (Hard cover) 
+o Final Report after approval 
+ 
+5.1.6 Soft Cover 
+ 
+Refer to  Appendix D for items required on cover and refer to Appendix J for 
+sample. The soft cover can be obtained from faculty office. 
+ 
+5.1.7 Hard Cover 
+ 
+Refer to Appendix D for items required on cover  and refer Appendix K for 
+sample. All letters must be printed in boldface (gold) capital letter. The minimum size 
+for the letter is 5mm in height. 
+ 
+5.1.8 Spine 
+ 
+Refer to  Appendix E  for items required on spine. All letters must be printed 
+in boldface (gold) capital letter s. The minimum size for the letter is 5  mm in height. 
+Direction of lettering must run from the top of spine. 
+ 
+5.1.9 Length of Report 
+ 
+The minimum number of words for Interim Report is FIVE thousand (5000) 
+words and Final Report is TEN thousand (10000) words. Note that, the words count is 
+applicable for main content (body) of the report only. 
+ 
+
+--- PAGE 35 ---
+ 
+ 34 
+5.1.10 CD/ DVD Label and Envelope 
+ 
+The CD/ DVD envelope should be properly made and attached to the last page 
+of the report. Refer to Appendix K. 
+ 
+5.2 Content Layout and Text Formatting 
+ 
+The following describes the content layout and text formatting of the report. 
+ 
+5.2.1 Page Margins 
+ 
+ The minimum-sized page margins are as follows: 
+• Left  40 mm 
+• Right  25 mm 
+• Top  25 mm 
+• Bottom  25 mm 
+ 
+5.2.2 Page Numbers 
+ 
+Page numbers should be centred and placed in the footer 15 mm from the edge 
+of the bottom of the page. Use typeface Times New Roman and the font size is 12 pt. 
+Every page except the title page must be numbered. Title page  is “ I” but is not 
+numbered. Preliminary pages are to be numbered in upper case Roman numerals (I, II, 
+III, IV and etc). The text pages are to be numbered in Arabic numerals (1, 2, 3 and etc.) 
+and all pages must be numbered consecutively and continuously, irrespective of 
+volumes. 
+ 
+5.2.3 Typesetting 
+ 
+• Typeface: Times New Roman for all text in report 
+• Text: Regular, font size 12 pt 
+• Chapter Title: Uppercase, bold, centred, font size 14 pt 
+• Sub-title (all levels): Title Case, bold, align left, font size 12 pt 
+
+--- PAGE 36 ---
+ 
+ 35 
+5.2.4 Chapter Numbering 
+ 
+Chapters and sections must be numbered and titled. Each sub -title must be 
+follow by at least one paragraph that describes the section and content.  Note that 
+student should avoid sections more than level four. 
+ 
+Example: 
+ CHAPTER 3 
+ 
+ MAIN TITLE 
+ 
+3.1 Sub-title (2nd Level) 
+ This section describes… 
+3.1.1 Sub-sub-title (3rd Level) 
+ The following describes… 
+3.1.1.1 Sub-sub-sub-title (4th Level) 
+ The detail of … 
+ 
+Figure 5.1: Example of Chapter Numbering 
+ 
+5.2.5 Spacing 
+ 
+Line spacing is one and a half (1.5) spacing. Use double (2.0) lines spacing for 
+the next paragraph. 
+ 
+5.2.6 Paragraph 
+ 
+The last paragraph of any page should comprise at least two lines of text. Any 
+heading appearing near the bottom of a page should be followed by at least two lines 
+of text. If this is not possible, the heading and the line should be continued in the next 
+page. If the last paragraph of a page has to be continued on the next page, there must 
+be at least two lines of the text appearing on the next page.  Each paragraph should be 
+indented one tab (1.27 cm or 0.5 inch) from the left margin.  General alignment for  
+texts in paragraph should be “Justified”. 
+
+--- PAGE 37 ---
+ 
+ 36 
+5.2.7 Numbers 
+ 
+Avoid beginning a sentence with a number or symbol. Number s have to be 
+used with appropriate unit s (e.g. 30%, 55 ml, 3 cm, 5 km, 10 kg, RM 30,000, 35 °C 
+and etc.). Otherwise, the number has to be spelled out in words (e.g. three sections, 
+five categories, three tools, thirty lines etc.). Use appropriate mathematic operators (e.g. 
+multiplication should be “×” and not “x”)   
+ 
+5.2.8 Equation  
+ 
+ Equations represented in symbols or variables must be italic (e.g. k, M, y, P,, 
+ etc.) and centred. The equation must be referred to by number in brackets with 
+respect to the chapter. The symbols or variables in equations must be described clearly 
+in text. There should be one and a half (1.5) lines spacing before and after the equation. 
+ 
+Example: 
+The following is the fourth equation appears in Chapter 5: 
+Albert Einstein proposed mass–energy equivalence equation as follows: 
+ 
+ E = mc2 (5.4) 
+ 
+where E is energy, m is mass, and c is the speed of light in a vacuum. 
+…. 
+they can be computed using the cosine law defined as, 
+2 2 2
+arccos 2
+a b c
+ab +−=
+ (5.5) 
+where a and b denote the two sides next to the angle α, and c is the side opposite to 
+α. 
+ 
+Figure 5.2: Example of Equation in Text 
+ 
+
+--- PAGE 38 ---
+ 
+ 37 
+5.2.9 Table  
+ 
+ Tables in text must be centred, numbered with respect to the chapter and 
+captioned. The caption should be positioned at the top-center of the table. The caption 
+should be bold and title case and single spacing. A table should be place d after it has 
+been referred to for the first time in the text. There should be one and a half (1.5) lines 
+spacing before and after the table. Tables which are presented in landscape format 
+should be bound with the top of the table to the spine.  
+ 
+Example: 
+The following is the third table described in text of Chapter 3: 
+… Table 3.3 show the performance comparison of the … 
+ 
+ Table 3.3: Biometrics Performance Comparison. 
+Biometrics Accuracy (%) 
+Hand Geometry 76.5% 
+Finger Print 95.2% 
+   
+Figure 5.3: Example of Table in Text 
+ 
+5.2.10 Figures  
+ 
+ Items that can be represented as figures include but are not limited to diagrams, 
+pictures, charts, programming codes, pseudo codes, graphs etc. All figures in text must 
+be centred, numbered to respect with the chapter and captioned. The caption should be 
+positioned at the bottom-center of the figure and single spacing. The caption should be 
+bold and title case. A figure should be placed after it has been referred to the first time 
+in the text. There should be one and a half (1.5) lines spacing before and after the figure. 
+Figures which are presented in landscape format should be bound with the top of the 
+table to the spine. Note that, all figures in the content must be referred or explained or 
+described in content/ text. Otherwise the figures should be placed in appendix.  
+  
+
+--- PAGE 39 ---
+ 
+ 38 
+Example: 
+The following is the fifth figure described in text of Chapter 7: 
+Figure 7.5 illustrates the sample image acquired by using the online and offline 
+methods respectively. 
+ 
+ 
+(a) 
+ 
+(b) 
+Figure 7.5: Palm Print Image Acquired using (a) Offline System, and (b) 
+Online System. 
+Figure 5.4: Example of Figure in Text 
+ 
+5.2.11 Reference 
+ 
+ Any material taken from another source must be identified, and a brief 
+reference to its source included in the text.  Thus, every reference quoted or cited in 
+the thesis must be included in the list of references accordingly  using American 
+Psychological Association (APA) style. References should be ordered alphabetically  
+and followed by chronological order for same author . Typeface to be used is Times 
+New Roman and the font size is 10  pt with one and a half (1.5) lines spacing. Use 
+double (2.0) lines spacing between entries. The second line of a reference must be 
+indented 12.7 mm. 
+ 
+Example: 
+Citation in text: 
+According to Adams and Zukofsky (1999a), they are adopting… The survey also 
+found that … (Adams and Zukofsky, 1999b). 
+... 
+… 
+Reference: 
+… 
+
+
+--- PAGE 40 ---
+ 
+ 39 
+Adams, J.A. & Zukofsky, S.P. (1999a). I saved my patient with the APA. 
+Adams, J.A. & Zukofsky, S.P. (1999b). New Style with APA. 
+American Journal of Public Health , 72, 801 -843. Retrieved August 13, 2001,from Health and 
+Wellness Resource Center database.52 
+Burgess, Q. (1998). Mastering the APA in 600 easy lessons (Rev. ed.).  
+Byrd, P. (1999, July/August). Bed -side manner with the APA. Hospital Etiquette , 53. Retrieved 
+August 19, 2001, from Academic Search Premier database. 
+Kinko, P., McConnell, C., Stone, S., Forehand, S., Blondeau, K., Leybold, J. (2001). We fought the 
+APA and the APA won. The Journal of the American Medical Association, 276, 1279-
+1285. 
+… 
+Figure 5.5: Example of Reference 
+ 
+Note that , student shall to refer the “ CitationInReferenceList.doc” and 
+“CitationStyleForReferenceInText.doc” document for more information and 
+examples about references and citations. The two documents can be downloaded from 
+the FIST-FYP website (http://fist2.mmu.edu.my/?page=32). 
+ 
+5.2.12 Appendices 
+ 
+The pages should be numbered continuously with the rest of the text. For 
+computer type written appendices, the t ypeface to be used is Times New Roman and 
+the font size is 10 pt and one and a half (1.5) lines spacing. 
+ 
+
+--- PAGE 41 ---
+ 
+ 40 
+5.3 Documentation Template and Layout Example  
+ 
+Students are  encouraged to follow  the “FypDocumentationTemplate.doc” 
+provided in the FIST -FYP website.  Students may also refer  to the some layout 
+examples in the appendices listed below: 
+ 
+• Appendix D: Layout for the Cover of the Interim/ Final Report/ Finalised FYP 
+2 Report/ Hardcover Report 
+• Appendix E: Layout of Spine of the Final Report  Hardcover Report (if 
+requested) 
+• Appendix F: Layout of Title Page of the Interim/ Final Report/ Finalised FYP 
+2 Report 
+• Appendix G: Layout of Copyright page of the Interim/ Final Report/ Finalised 
+FYP 2 Report 
+• Appendix H: Layout of Declaration page of the Interim/ Final Report/ Finalised 
+FYP 2 Report 
+  
+
+--- PAGE 42 ---
+ 
+ 41 
+ 
+6 AWARDS, EXHIBITIONS AND CONFERENCES 
+ 
+6.1 Awards/ Competition 
+ 
+There are many awards offered as a motivation for your FYP effort. This also 
+really looks good in your resume and it will help increasing the chance of getting a 
+good job, not to mention that some of the awards are worth quite a sum of money as 
+well. 
+ 
+ The faculty promotes participation in competitions co-organized by the faculty 
+and industrial partners or other external bodies. Some of the awards/ competitions that 
+may be available for student to participate in are as follows: 
+ 
+• IBM Best IT Project Award: For best FYP that utilizes IBM technologies and 
+tools. 
+• Shell Technology Innovation Award : Five best FIST FYP projects shall be 
+selected for competition with FYP projects from each faculty. 
+• MSC Asia Pacific ICT Award (APICTA): FYP projects can be nominated 
+by the students   themselves  for  participation  in  the  Best  of  Tertiary  Student  
+Project (Software/Hardware or  Creative Multimedia) Category, the winner 
+shall represent Malaysia for Asia-Pacific Finals. Visit www.mscapicta.com.my  
+for details. 
+• Microsoft Imagine Cup Award : Imagine Cup is your chance to innovate, 
+show the world what you've got, and win some serious prizes. Visit 
+www.imagincup.com/ for details. 
+ 
+6.2 Exhibition/ Expo 
+ 
+A student who develops an impressive and demonstrable project or prototype may 
+be requested by supervisor, faculty or university to participate in local or international 
+exhibition/ expo to introduce their products to people. This will provide exposure for 
+the student who would like to be an entrepreneur and meet potential investors or 
+
+--- PAGE 43 ---
+ 
+ 42 
+customers who may buy or invest into their project. Some exhibition s may provide 
+certificates, medals and awards and the projects may be evaluated by judges from 
+industry. The duration of the exhibition/ expo is about 1 to 3 days.  Some of the 
+exhibitions/ expos which may be available for student to participate are as follow: 
+ 
+• Invention Innovative & Technology Exhibition (ITEX) : The leading 
+exhibition in Asia that showcases new inventions, technologies and products. 
+Judging will be conducted and medals and certificates will be awarded to 
+winners. Visit www.itex.com.my for more details. 
+• Malaysia Technology Expo  (MTE): An exhibition that showcase s 
+technologies and products.  Judging will be conducted and medals and 
+certificates will be awarded to winners. Visit www.mte.org.my for more details. 
+• MMU Open Projects Exhibition : Display and present projects to the public 
+and visitors. Certificates will be provided to students. 
+ 
+6.3 Proceedings Conference  
+ 
+Students who have good research work are encourage d to submit research 
+papers to a well -known (listed in ISI -indexed or MMU conference list ) local/ 
+international conference. The student should discuss this with the supervisor to obtain 
+advice and recommendation before submitting his/ her research paper to any  
+conference. The supervisor may guide and provide some knowledge related to research 
+publication to the student. Student is advised to do an in-depth literature review to 
+grasp the techniques on how to write a research paper. There are plenty of sources to 
+download research papers for readings and references, some of the well-known online 
+research libraries are IEEExplore, ACM, Science Direct etc.  
+ 
+  
+
+--- PAGE 44 ---
+ 
+ 43 
+ 
+7 PITFALLS AND PROBLEMS 
+ 
+7.1 Problems 
+ 
+The final year project will be a demanding but exciting learning experience. 
+However, it is not without problems which, if not identified and addressed, could 
+seriously affect the final result and ultimately reduce your grade. In this section we 
+mention some of these problems and how to avoid them. 
+ 
+• The “Overachiever” Problem. A common problem is selecting a topic that is 
+far too ambitious for the allotted time. Remember that you have only 11 weeks 
+to finish the coding, debugging, experimenting, collecting data and testing. Be 
+careful not to select a topic that is unrealistica lly large. This can lead to 
+frustration as well as errors caused by “cutting corners” and hurrying through 
+the implementation. Discuss with your advisor the scale of what you are 
+planning. If he or she thinks it may be too large, cons ider implementing the 
+project in stages, each complete in itself. When FYP 1 is working move on to 
+FYP 2. If you do not finish FYP 2, however, you still will have a functioning 
+system. 
+ 
+• The “Do It Tomorrow” Problem . 11 weeks sounds like a long time, but it 
+goes by quickly. You need an implementation schedule that allocates 
+reasonable amounts of work throughout the entire semester. Then you must 
+stick to that schedule. Don’t be tempted to postpone work on the project  
+because Week 11 seems so far off. All that happens is that during the final few 
+weeks you rush madly to get something working, and software implemented in 
+a rush rarely works correctly! 
+ 
+• The “Poop Out At the End” Problem . You have worked hard for 11 weeks 
+to complete this project. You have spent many late nights and chased down 
+hundreds of bugs, but it is now working, so are you done? Absolutely not! The 
+project grade is not based only on the programs you develop but also  on your 
+
+--- PAGE 45 ---
+ 
+ 44 
+written reports and oral presentations. Don’t produce a poorly written paper or 
+give a poorly organized presentation. That will negate much of your good work. 
+Put in the time needed to prepare both a well written, high -quality final report 
+and a well-organized, polished presentation. Good work on these last steps will 
+ensure that you receive a grade that fairly represents the work you have done. 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 46 ---
+ 
+ 45 
+APPENDICES 
+ 
+Refer to next page. 
+  
+
+--- PAGE 47 ---
+ 
+ 46 
+Appendix A: FYP Meeting Log 
+ 
+Faculty of Information Science and Technology (FIST) 
+Final Year Project Meeting Log 
+(To be filled in by Student) 
+MEETING DATE: MEETING NO.: 
+PROJECT ID:  
+PROJECT TITLE : 
+SESSION : SUPERVISOR : 
+STUDENT ID & Name:         CO- SUPERVISOR : 
+ 
+1. WORK DONE [Please write the details of the work done after the last meeting.] 
+ 
+ 
+ 
+2. WORK TO BE DONE  
+ 
+ 
+ 
+3. PROBLEMS ENCOUNTERED 
+ 
+4. COMMENTS 
+ 
+ 
+ 
+ 
+ 
+ 
+NOTES:  
+1. Items 1 – 3 are to be completed by the students before coming for the meeting. Item 4 is to be 
+completed by the supervisor.  
+2. For FYP 1, total six log sheets are to be submitted (every other week*).  
+3. For FYP 2, total six log sheets are to be submitted (every other week**). 
+4. Log sheets are compulsory assessment criteria for FYP. Student who fails to meet the requirements of 
+log sheets will not be allowed to submit FYP report. 
+ 
+*: week 1, 3, 5, 7, 9, 11 or 2, 4, 6, 8, 10, 11 of the first trimester (week 12: report submission, weeks 
+13 & 14: presentation) 
+**: week 1, 3, 5, 7, 9, 11 or 2, 4, 6, 8, 10, 11 of the second trimester (week 12: report submission,      
+weeks 13 & 14: presentation)    
+ 
+Supervisor’s Signature & 
+Stamp 
+ Co-Supervisor’s Signature 
+& Stamp (if any) 
+ Student’s Signature 
+
+--- PAGE 48 ---
+ 
+ 47 
+ Appendix B: Checklist for FYP Interim Submission  
+ 
+Faculty of Information Science and Technology (FIST) 
+Checklist for Interim Report Submission 
+(To be filled in by Student) 
+STUDENT’S DETAILS 
+Project Code  FIST 
+Name  
+ID No  
+Title of Thesis  
+Supervisor Name  
+ 
+REPORT ARRANGEMENT  √ Comments (if any differences) 
+1. Cover of The Interim Report   
+2. Title Page of the Interim Report   
+3 Copyright page of I Interim Report   
+4. Declaration Page of Interim report   
+5. Acknowledgement   
+6. Table of Contents   
+7. Abstract   
+8. List of Tables   
+9. List of Figures   
+10. List of Symbols   
+11. List of Appendices   
+12. Chapter 1: Introduction – objectives,  
+      scope     
+13. Chapter 2: Literature Review   
+14. Chapter 3: Title:   
+15. Chapter 4: Title:   
+16. Chapter 5: Title:   
+17. References – APA style   
+18. Appendices   
+19. CD/ DVD and envelope as shown in Appendix K   
+20. Attachment : FYP Meeting Logs (all) 1 set   
+ 
+FORMAT OF REPORT √ Comments 
+1. Page Numbering   
+2. Font and Type Face   
+3. Font Cover   
+4. Tables and Figures   
+5. Comb Bind   
+6. Colour of the Front Cover   
+7. Number of words > 5000 (Main content only)   
+Checked by 
+ 
+________________________ 
+Student’s Signature & Date 
+ 
+
+
+--- PAGE 49 ---
+ 
+ 48 
+Appendix C: Checklist for FYP Final Report Submission 
+ 
+Faculty of Information Science and Technology (FIST) 
+Checklist for Final Report Submission 
+(To be filled in by Student) 
+STUDENT’S DETAILS 
+Project Code  FIST 
+Name  
+ID No  
+Title of Thesis  
+Supervisor Name  
+ 
+REPORT ARRANGEMENT  √ Comments (if any differences) 
+1. Cover of The Final Report   
+2. Title Page of the Final Report   
+3 Copyright page of I Final Report   
+4. Declaration Page of Final report   
+5. Acknowledgement   
+6. Table of Contents   
+7. Abstract   
+8. List of Tables   
+9. List of Figures   
+10. List of Symbols   
+11. List of Appendices   
+12. Chapter 1: Introduction – objectives, scope   
+13. Chapter 2: Literature Review   
+14. Chapter 3: Title:   
+15. Chapter 4: Title:   
+16. Chapter 5: Title:   
+17. Chapter 6: Title:   
+18. Chapter 7: Title:   
+19. Chapter 8: Title:   
+20. References – APA style   
+21. Appendices   
+22. CD/ DVD and envelope as shown in Appendix K   
+23. Attachment: FYP Meeting Logs (all) - 1 set   
+ 
+FORMAT OF REPORT √ Comments 
+1. Page Numbering   
+2. Font and Type Face   
+3. Font Cover   
+4. Tables and Figures   
+5. Spine Format   
+6. Comb Bind (For evaluation)   
+7. Permanent Bind (After approval)   
+8. Colour of the Front Cover   
+9. Number of words > 10000 (Main content only)   
+Checked by 
+ 
+________________________ 
+Student’s Signature & Date 
+
+
+--- PAGE 50 ---
+ 
+ 49 
+ 
+ Appendix D: Layout for the Cover of the Interim/ Final Report/ Hard-Cover 
+ 
+ 
+    
+       
+ 
+ SECURE PROJECT  
+ MANAGEMENT SYSTEM 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ NURUL NADIA AHMAD 
+ 
+ 
+ SESSION 2017/2018 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ FACULTY OF INFORMATION SCIENCE & TECHNOLOGY 
+ 
+ MULTIMEDIA UNIVERSITY 
+ 
+ APRIL 2018 
+ 
+ 
+ 
+ 
+Title of Final Year Project 
+Typeface: Times New Roman 
+Font size: 20 
+Name of Candidate  
+Typeface: Times New Roman 
+Font size: 16 
+ 
+Faculty, Name of University and 
+Month & Year of the project 
+submission date (MUST follow the 
+submission date) 
+Typeface: Times New Roman 
+Font size: 12 
+50 mm from the top of the page
+  
+45 mm from the left margin 
+45 mm from the right margin 
+Session: MUST follow the 
+submission session) 
+ 
+Typeface: Times New Roman 
+Font size: 12 
+ 
+50 mm from the bottom of the page 
+
+--- PAGE 51 ---
+ 
+ 50 
+ 
+ Appendix E: Layout of Spine of the Final Report (Hard Cover only) 
+ 
+             
+ 
+ 
+   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+NURUL NADIA AHMAD SECURE PROJECT  
+MANAGEMENT SYSTEMTEMS 
+ 
+WITH KER 
+SESSION 
+2009/2010 
+ 
+20 mm from the top of the spine 
+20 mm from the bottom of the spine 
+Title of final year project 
+Typeface: Times New Roman 
+Font size: 14 
+Name of Candidate 
+Typeface: Times New Roman 
+Font size: 14 
+IF REQUESTED BY THE 
+SUPERVISOR/FACULTY ONLY 
+
+--- PAGE 52 ---
+ 
+ 51 
+Appendix F: Layout of Title Page of the Interim/ Final Report   
+ 
+ 
+ 
+ 
+ SECURE PROJECT  
+ MANAGEMENT SYSTEM 
+ 
+ BY 
+ 
+ 
+ NURUL NADIA AHMAD 
+ 
+ 
+ 
+ SESSION 2018/2019 
+ 
+ 
+ 
+ 
+ THE PROJECT REPORT IS PREPARED FOR 
+ 
+FACULTY OF INFORMATION SCIENCE & TECHNOLOGY 
+ MULTIMEDIA UNIVERSITY 
+ IN PARTIAL FULFILLMENT 
+ FOR 
+ 
+ BACHELOR OF INFORMATION TECHNOLOGY 
+ B.I.T. (HONS) SECURITY TECHNOLOGY 
+ 
+ FACULTY OF INFORMATION SCIENCE & TECHNOLOGY 
+ 
+ 
+ MULTIMEDIA UNIVERSITY 
+ 
+ SEPTEMBER 2018 
+ 
+ 
+Title of project 
+Typeface: Times New Roman 
+Font Size: 20 
+Name of candidate 
+Typeface: Times New Roman 
+Font Size: 16 
+Degree and Faculty Enrolled 
+Typeface: Times New Roman 
+Font size: 12 
+Name of University 
+Typeface: Times New Roman 
+Font size: 16 
+ 
+Month & Year of Project 
+submission date (MUST follow 
+the submission MONTH & 
+YEAR) 
+Typeface: Times New Roman 
+Font size: 12 
+50 mm from the top of the page
+  
+45 mm from the left margin 
+45 mm from the right margin 
+50 mm from the bottom of the page 
+
+--- PAGE 53 ---
+ 
+ 52 
+  
+Appendix G: Layout of Copyright Page of the Interim/ Final Report 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+© 2018 Universiti Telekom Sdn. Bhd.  ALL RIGHTS RESERVED 
+ 
+Copyright of this report belongs to Universiti Telekom Sdn. Bhd  as 
+qualified by Regulation 7.2 (c) of the Multimedia University 
+Intellectual Property and Commercialization policy. No part of this 
+publication may be reproduced, stored in or introduced into a retrieval 
+system, or transmitted in any form or by any means (electronic, 
+mechanical, photocopying, recording, or otherwise), or for any 
+purpose, without the express written permission of Universiti Telekom 
+Sdn. Bhd.  Due acknowledgement shall always be made of the use of 
+any material contained in, or derived from, this report.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Typeface: Times New Roman 
+Font size: 12 
+To be placed justify of the page 
+ 
+Typeface: Times New Roman 
+Font size: 14 
+Alignment: Text to be placed Justify of the page 
+ 
+Year of the project submission 
+(MUST follow the submission 
+year) 
+
+--- PAGE 54 ---
+ 
+ 53 
+ 
+Appendix H: Layout of Declaration Page of the Final Report (Soft Cover Interim/ 
+Final Report for evaluation) 
+ 
+ 
+ 
+ 
+DECLARATION 
+ 
+I hereby declare that the work have  been done by myself and no portion of the work 
+contained in this thesis has been submitted in support of any application for any other 
+degree or qualification of this or any other university or institute of learning. 
+ 
+ 
+____________________ 
+Name of candidate  
+Faculty of Information Science & Technology 
+Multimedia University 
+Submission Date: DD: MM: YYYY 
+Submission Time: HH : MM 
+ 
+------------------------------ ----------------------------------------------------------- 
+Student’s Receipt. 
+------------------------------------------------------------------------------------------------------ 
+I hereby acknowledge the receipt of this report  
+ 
+Supervisor Signature:  
+Supervisor Name: 
+Supervisor Stamp: 
+Date & Time of Receipt: 
+ 
+ 
+  
+Typeface: Times New Roman 
+Font size: 12 
+
+--- PAGE 55 ---
+ 
+ 54 
+ 
+Appendix I: Layout of Declaration Page of the FYP 2 - FINALISED Report 
+ 
+ 
+ 
+ 
+DECLARATION 
+ 
+I hereby declare that the work have been done by myself and no portion of the work 
+contained in this thesis has been submitted in support of any application for any other 
+degree or qualification of this or any other university or institute of learning. 
+ 
+ 
+____________________ 
+Name of candidate  
+Faculty of Information Science & Technology 
+Multimedia University 
+Submission Date: DD: MM: YYYY 
+Submission Time: HH : MM 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Typeface: Times New Roman 
+Font size: 12 
+
+--- PAGE 56 ---
+ 
+ 55 
+ 
+ 
+ 
+Appendix J: Sample of Soft Cover Interim/ Final Report for evaluation 
+ 
+  
+IF REQUESTED BY THE SUPERVISOR/FACULTY 
+ONLY 
+
+--- PAGE 57 ---
+ 
+ 56 
+ 
+ 
+Appendix K: Sample of Hard Cover Final Report (Front) 
+ 
+Colour: Dark Blue 
+  
+IF REQUESTED BY THE SUPERVISOR/FACULTY 
+ONLY 
+
+--- PAGE 58 ---
+ 
+ 57 
+ 
+ 
+Appendix L: Layout of CD/ DVD envelope 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+The CD/ DVD envelope (White colour) MUST be attached to the center of the last 
+page of the report. 
+11 cm 
+13 cm 
+13 cm 
+3 cm 
+ 
+{Project Title} 
+{Name} 
+{Session} 
+Faculty of Information Science & Technology 
+Multimedia University 
+CD/ DVD 
+Labels 
+IF REQUESTED BY THE SUPERVISOR/FACULTY 
+ONLY 

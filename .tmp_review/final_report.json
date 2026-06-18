@@ -1,0 +1,516 @@
+{
+  "paragraph_count": 701,
+  "table_count": 30,
+  "word_count_approx": 10715,
+  "headings_like": [
+    "MACHINE LEARNING BASED MALICIOUS WEBSITE DETECTION AND RESPONSE SYSTEM",
+    "CHONG YOU XIN",
+    "FACULTY OF INFORMATION SCIENCE & TECHNOLOGY",
+    "MULTIMEDIA UNIVERSITY",
+    "JUNE 2026",
+    "MACHINE LEARNING BASED MALICIOUS WEBSITE DETECTION AND RESPONSE SYSTEM",
+    "BY",
+    "CHONG YOU XIN",
+    "THE PROJECT REPORT IS PREPARED FOR",
+    "FACULTY OF INFORMATION SCIENCE & TECHNOLOGY",
+    "MULTIMEDIA UNIVERSITY",
+    "IN PARTIAL FULFILLMENT",
+    "FOR",
+    "BACHELOR OF INFORMATION TECHNOLOGY",
+    "(HONS) SECURITY TECHNOLOGY",
+    "FACULTY OF INFORMATION SCIENCE & TECHNOLOGY",
+    "MULTIMEDIA UNIVERSITY",
+    "JUNE 2026",
+    "DECLARATION",
+    "CHONG YOU XIN",
+    "ACKNOWLEDGEMENT",
+    "ABSTRACT",
+    "TABLE OF CONTENTS",
+    "DECLARATION\tIII",
+    "ACKNOWLEDGEMENT\tIV",
+    "Abstract\tV",
+    "LIST OF ABBREVIATIONS/ SYMBOLS\tXIII",
+    "CHAPTER 1 INTRODUCTION\t18",
+    "1.1\tOverview\t18",
+    "1.2\tProblem Statement\t18",
+    "1.3\tProject Objectives\t19",
+    "1.4\tProject Scope\t20",
+    "CHAPTER 2 LITERATURE REVIEW\t21",
+    "2.1\tIntroduction\t21",
+    "2.2\tFeature Spaces and Data Sources\t22",
+    "2.3\tMachine Learning and Deep Learning Techniques\t23",
+    "2.4\tAdversarial Attacks and Robustness\t25",
+    "2.5\tReal-time Detection and Response Mechanisms\t25",
+    "2.6\tResearch Gap and Motivation\t26",
+    "CHAPTER 3 Methodology\t28",
+    "3.1\tIntroduction\t28",
+    "3.2\tDevelopment Approach\t28",
+    "3.3\tSystem Architecture Methodology\t30",
+    "3.4\tDataset Collection and Preparation\t32",
+    "3.5\tFeature Engineering\t35",
+    "3.6\tMachine Learning Model Development\t38",
+    "3.7\tRuntime Risk Assessment Methodology\t39",
+    "3.8\tRuntime DOM Analysis\t40",
+    "3.9\tReputation Verification Methodology\t41",
+    "3.10\tSystem Testing Methodology\t41",
+    "3.11\tSummary\t42",
+    "CHAPTER 4 System Design and Solution\t43",
+    "4.1\tIntroduction\t43",
+    "4.2\tSystem Architecture\t43",
+    "4.3\tDevelopment Environment\t45",
+    "4.4\tDataset Preparation\t46",
+    "4.5\tFeature Engineering\t47",
+    "4.6\tMachine Learning Model Implementation\t50",
+    "4.7\tBrowser Extension Implementation\t51",
+    "4.8\tFastAPI Backend Implementation\t53",
+    "4.9\tThreat Assessment and Response Mechanism\t53",
+    "4.10\tReputation Verification Module\t55",
+    "4.11\tLogging and Data Storage\t55",
+    "4.12\tChapter Summary\t56",
+    "CHAPTER 5 Implementation Results\t57",
+    "5.1\tIntroduction\t57",
+    "5.2\tVariation from FYP 1 Plan\t57",
+    "5.3\tDevelopment Environment\t58",
+    "5.4\tDataset Preparation\t59",
+    "5.5\tData Splitting\t59",
+    "5.6\tFeature Engineering Implementation\t60",
+    "5.7\tMachine Learning Model Training\t61",
+    "5.8\tModel Comparison Results\t62",
+    "5.9\tFeature Importance Analysis\t62",
+    "5.10\tSystem Architecture Implementation\t63",
+    "5.11\tImplementation Evidence\t64",
+    "5.12\tBrowser Extension Implementation\t65",
+    "5.13\tRisk Assessment and Response Implementation\t66",
+    "5.14\tVirusTotal Integration\t66",
+    "5.15\tPrediction Logging Implementation\t67",
+    "5.16\tSystem Workflow\t68",
+    "5.17\tSystem Demonstration\t70",
+    "5.18\tChapter Summary\t78",
+    "CHAPTER 6 TESTING AND EVALUATION OF FINDINGS\t79",
+    "6.1\tIntroduction\t79",
+    "6.2\tExperimental Setup\t79",
+    "6.3\tFeature Evaluation\t80",
+    "6.4\tMachine Learning Model Comparison\t82",
+    "6.5\tDeployment Threshold Evaluation\t83",
+    "6.6\tHard-Negative Evaluation\t84",
+    "6.7\tFunctional System Testing\t85",
+    "6.8\tSoftware Verification Testing\t86",
+    "6.9\tAchievement of Project Objectives\t87",
+    "6.10\tLimitations of the Evaluation\t87",
+    "CHAPTER 7 CONCLUSION\t89",
+    "7.1\tSummary\t89",
+    "7.2\tKey Contributions and Justifications\t89",
+    "7.3\tFuture Works and Development\t90",
+    "REFERENCES\t91",
+    "APPENDICES\t94",
+    "LIST OF TABLES",
+    "LIST OF FIGURES",
+    "LIST OF ABBREVIATIONS/ SYMBOLS",
+    "LIST OF APPENDICES",
+    "Appendix A: Meeting Logs 1-6\t97",
+    "Appendix B: Technical Paper\t104",
+    "INTRODUCTION",
+    "LITERATURE REVIEW",
+    "857 benign URLs",
+    "300 malicious URLs",
+    "42 benign URLs",
+    "Chapter Summary",
+    "Chapter Summary",
+    "TESTING AND EVALUATION OF FINDINGS",
+    "CONCLUSION",
+    "REFERENCES",
+    "APPENDICES",
+    "Appendix A: Meeting Logs 1-6",
+    "Appendix B: Technical Paper",
+    "CHONG YOU XIN, 18.06.2026"
+  ],
+  "first_80_paragraphs": [
+    "MACHINE LEARNING BASED MALICIOUS WEBSITE DETECTION AND RESPONSE SYSTEM",
+    "CHONG YOU XIN",
+    "FACULTY OF INFORMATION SCIENCE & TECHNOLOGY",
+    "MULTIMEDIA UNIVERSITY",
+    "JUNE 2026",
+    "MACHINE LEARNING BASED MALICIOUS WEBSITE DETECTION AND RESPONSE SYSTEM",
+    "BY",
+    "CHONG YOU XIN",
+    "THE PROJECT REPORT IS PREPARED FOR",
+    "FACULTY OF INFORMATION SCIENCE & TECHNOLOGY",
+    "MULTIMEDIA UNIVERSITY",
+    "IN PARTIAL FULFILLMENT",
+    "FOR",
+    "BACHELOR OF INFORMATION TECHNOLOGY",
+    "(HONS) SECURITY TECHNOLOGY",
+    "FACULTY OF INFORMATION SCIENCE & TECHNOLOGY",
+    "MULTIMEDIA UNIVERSITY",
+    "JUNE 2026",
+    "© 2026 Universiti Telekom Sdn. Bhd.  ALL RIGHTS RESERVED",
+    "Copyright of this report belongs to Universiti Telekom Sdn. Bhd as qualified by Regulation 7.2 (c) of the Multimedia University Intellectual Property and Commercialization policy. No part of this publication may be reproduced, stored in or introduced into a retrieval system, or transmitted in any form or by any means (electronic, mechanical, photocopying, recording, or otherwise), or for any purpose, without the express written permission of Universiti Telekom Sdn. Bhd.  Due acknowledgement shall always be made of the use of any material contained in, or derived from, this report.",
+    "DECLARATION",
+    "I hereby declare that the work has been done by myself and no portion of the work contained in this thesis has been submitted in support of any application for any other degree or qualification of this or any other university or institute of learning.",
+    "____________________",
+    "CHONG YOU XIN",
+    "Faculty of Information Science & Technology",
+    "Multimedia University",
+    "Submission Date: 18.06.2026",
+    "Submission Time: 18: 00",
+    "ACKNOWLEDGEMENT",
+    "First of all, I would like to thank everyone involved in the process of completing this project. Prof. Ts. Dr. Heng Swee Huay has been extremely patient and guided me with brilliance throughout the whole project.",
+    "Other than that, I would like to extend my utmost gratitude to all my seniors, friends and my parents for supporting me through my studies and being there for me whenever needed.",
+    "Lastly, I would like to thank MMU for providing this prestigious platform and opportunity to participate and carry out this project with valuable resources.",
+    "ABSTRACT",
+    "Malicious and phishing websites remain one of the most common and effective attack points of cyberattacks, both at the individual and organisational levels. The sites will mimic authentic Internet-based services to mislead people to reveal sensitive data or malware code that instances a breach of systems. Old methods of site protection, including browser alerts, static blacklists, and signature-based detection systems are becoming less useful as they cannot identify the newly developed or rapidly changing malicious websites. Attackers often alter URL formats, domain attributes, and content of web pages in order to avoid detection causing delayed or inefficient protection.",
+    "The final system relies on engineered URL features, trust-aware indicators, brand-mismatch checks, lightweight DOM-assisted signals and optional VirusTotal reputation verification. The Gradient Boosting classifier was chosen after comparing the Logistic Regression, Support Vector Machine, Random Forest, and Gradient Boosting models on the prepared dataset.",
+    "The threat assessment system translates confidence in predictions and supporting evidence into low, medium and high-risk levels. Low risk websites are allowed. Medium risk websites get caution notifications. High risk websites get redirected to a warning page with an optional proceed-once override.",
+    "The final architecture is a Chrome extension that communicates with a local FastAPI backend. This design supersedes the previous proxy-based direction, as it is easier to demonstrate, avoids the complexity of HTTPS interception, and directly supports browser-based warnings, blocking and logging.",
+    "The completed prototype demonstrates that a lightweight machine learning detector can be coupled with an automated browser response mechanism. It achieved good model evaluation results, maintained zero false positives on the curated hard-negative benign set for the chosen threshold, and passed the software verification tests implemented.",
+    "TABLE OF CONTENTS",
+    "DECLARATION\tIII",
+    "ACKNOWLEDGEMENT\tIV",
+    "Abstract\tV",
+    "Table of contents\tVII",
+    "List of tables\tX",
+    "List of figures\tXII",
+    "LIST OF ABBREVIATIONS/ SYMBOLS\tXIII",
+    "List of appendices\tXIV",
+    "CHAPTER 1 INTRODUCTION\t18",
+    "1.1\tOverview\t18",
+    "1.2\tProblem Statement\t18",
+    "1.3\tProject Objectives\t19",
+    "1.4\tProject Scope\t20",
+    "CHAPTER 2 LITERATURE REVIEW\t21",
+    "2.1\tIntroduction\t21",
+    "2.2\tFeature Spaces and Data Sources\t22",
+    "2.3\tMachine Learning and Deep Learning Techniques\t23",
+    "2.4\tAdversarial Attacks and Robustness\t25",
+    "2.5\tReal-time Detection and Response Mechanisms\t25",
+    "2.6\tResearch Gap and Motivation\t26",
+    "CHAPTER 3 Methodology\t28",
+    "3.1\tIntroduction\t28",
+    "3.2\tDevelopment Approach\t28",
+    "3.3\tSystem Architecture Methodology\t30",
+    "3.4\tDataset Collection and Preparation\t32",
+    "3.5\tFeature Engineering\t35",
+    "3.6\tMachine Learning Model Development\t38",
+    "3.7\tRuntime Risk Assessment Methodology\t39",
+    "3.8\tRuntime DOM Analysis\t40",
+    "3.9\tReputation Verification Methodology\t41",
+    "3.10\tSystem Testing Methodology\t41",
+    "3.11\tSummary\t42",
+    "CHAPTER 4 System Design and Solution\t43",
+    "4.1\tIntroduction\t43",
+    "4.2\tSystem Architecture\t43",
+    "4.3\tDevelopment Environment\t45",
+    "4.4\tDataset Preparation\t46",
+    "4.5\tFeature Engineering\t47",
+    "4.6\tMachine Learning Model Implementation\t50",
+    "4.7\tBrowser Extension Implementation\t51",
+    "4.8\tFastAPI Backend Implementation\t53"
+  ],
+  "last_40_paragraphs": [
+    "The results of these tests show that the system that has been implemented is able to correctly distinguish between malicious and legitimate websites, as well as having a low number of false positive results, and offering real-time responses to the browser that can be applied in real-time to protect users.",
+    "CONCLUSION",
+    "Summary",
+    "One way hackers trick people online is through fake sites designed to steal info. This work built a tool that spots those using smart algorithms trained on real data patterns. Instead of just reacting, it acts fast thanks to a browser add-on linked to a responsive server setup. Features pulled from web addresses feed into a decision engine powered by boosted trees. Depending on risk level, actions range from warnings to deeper scans via VirusTotal. All activity gets stored locally in a lightweight database for later review. Each piece connects smoothly - no gaps, no delays.",
+    "Key Contributions and Justifications",
+    "What stands out here is how machine learning detection links directly to real-world automated reactions. Rather than just showing how accurate predictions are, the system turns those outcomes into actual steps within a browser. For instance, it can trigger warning messages when risk appears moderate. If danger levels rise, access gets cut off automatically. Users still retain limited control through one-time overrides under specific conditions. Every interaction leaves a trace in local logs for later review.",
+    "Right off the bat, stories shaped how the system came together. Built-in web shortcuts keep things quick for live sorting tasks because speed matters more than bulk analysis here. Hidden structure hints plus name-checking layers slipped in later just to catch subtle differences others might miss. Heavy neural networks stayed out on purpose since simpler checks cover enough ground already.",
+    "Starting fresh, these choices fill holes found in past studies. Notably, there's a real demand for tools that spot bad websites fast while being clear about how they work. Instead of just flagging threats, the system pushes alerts straight to users. Built-in transparency helps people trust what happens behind the scenes. What matters most is putting usable defences into actual practice - no extra layers, no confusion.",
+    "Future Works and Development",
+    "One next step could be refining the prototype past its current FYP 2 stage. Expanding the data it uses might help performance down the line. Automated updates to that data, along with clear version records, may add reliability over time. Better methods for parsing page content would likely boost accuracy in detection. Looking into how redirect chains behave offers another path forward. Certificate details, too, hold clues worth exploring further. User privacy around log handling needs tighter safeguards than now. Outside reputation checks must also respect those boundaries just as strictly. Real-world testing across more diverse sites will shape its robustness ahead.",
+    "Putting it all together, the system ended up delivering a functional tool for spotting harmful web links. This version shows how a transparent AI approach fits into both a browser add-on and server setup, offering on-the-spot alerts during actual use - though certain boundaries remain visible, along with paths worth exploring later.",
+    "REFERENCES",
+    "Aslam, S., Aslam, H., Manzoor, A., Hui, C., & Rasool, A. (2024). AntiPhishStack: LSTM-based stacked generalization model for optimized phishing URL detection. arXiv. https://arxiv.org/abs/2401.08947",
+    "Guo, X. (2023). Evaluation on malicious URL detection with different features based on various machine learning algorithms. In Proceedings of the 12th International Conference on Data Science (pp. 543–550). SCITEPRESS. https://www.scitepress.org/Papers/2023/128084/",
+    "Haq, Q. E., Faheem, M. H., & Ahmad, I. (2024). Detecting phishing URLs based on a deep learning approach to prevent cyber-attacks. Applied Sciences, 14(22), 10086. https://doi.org/10.3390/app14221008",
+    "Nowroozi, E., Jadalla, N., Ghelichkhani, S., & Jolfaei, A. (2024). Mitigating label-flipping attacks in malicious URL detectors using ensemble trees. arXiv. https://arxiv.org/abs/2403.02995",
+    "Nowroozi, E., Abhishek, M., Mohammadi, M., & Conti, M. (2022). An adversarial attack analysis on malicious advertisement URL detection framework. arXiv. https://arxiv.org/abs/2204.13172",
+    "Tian, Y., Yu, Y., Sun, J., & Wang, Y. (2025). From past to present: A survey of malicious URL detection techniques, datasets, and code repositories. arXiv. https://arxiv.org/abs/2504.16449",
+    "Türk, F., et al. (2025). Malicious URL detection with advanced machine learning. Applied Sciences, 15(18), 10090. https://doi.org/10.3390/app151810090",
+    "Gandotra, E., & Gupta, D. (2020). Improving Spoofed website detection using machine learning. Cybernetics & Systems, 52(2), 169–190. https://doi.org/10.1080/01969722.2020.1826659",
+    "Swetha, T., Seshaiah, M., Hemalatha, K. L., ManjunathaKumar, B. H., & Murthy, S. V. N. (2024). Hybrid machine learning approach for real-time malicious URL detection using SOM-RMO and RBFN with tabu search optimization. arXiv. https://arxiv.org/abs/2407.06221",
+    "Zhang, L., & Yan, Q. (2023). Detect malicious websites by building a neural network to capture global and local features of websites. Computers & Security, 137, 103641. https://doi.org/10.1016/j.cose.2023.103641",
+    "Adam, H. A., Nasution, S. F., Simanungkalit, R. R., & Diansyah, I. H. (2024). Machine Learning-Driven Detection of Malicious URL: Comparative analysis of random forest and SVMs. ojs.uma.ac.id. https://doi.org/10.31289/jite.v8i1.11844",
+    "Albishri, A. A., & Dessouky, M. M. (2024). A comparative analysis of machine learning techniques for URL phishing detection. Engineering, Technology & Applied Science Research, 14(6), 18495–18501. https://doi.org/10.48084/etasr.8920",
+    "Elsadig, M., Ibrahim, A. O., Basheer, S., Alohali, M. A., Alshunaifi, S., Alqahtani, H., Alharbi, N., & Nagmeldin, W. (2022). Intelligent deep machine learning cyber phishing URL detection based on BERT features extraction. Electronics, 11(22), 3647. https://doi.org/10.3390/electronics11223647",
+    "Odeh, N., & Hijazi, S. (2025). Detection and prevention of phishing short URLs using machine learning and blacklist approaches. International Journal of Wireless and Microwave Technologies, 15(3), 37–53. https://doi.org/10.5815/ijwmt.2025.03.03",
+    "Yoon, J.-H., Buu, S.-J., & Kim, H.-J. (2024). Phishing webpage detection via multi-modal integration of HTML DOM graphs and URL features based on graph convolutional and transformer networks. Electronics, 13(16), 3344. https://doi.org/10.3390/electronics13163344",
+    "Aljabri, M., et al. (2022). Detecting malicious URLs using machine learning techniques: Review and research directions. IEEE. https://ieeexplore.ieee.org/document/9950508",
+    "Abad, S., Gholamy, H., & Aslani, M. (2023). Classification of malicious URLs using machine learning. Sensors, 23(18), 7760. https://doi.org/10.3390/s23187760",
+    "A, S. R., R, M., N, R., L, S., & N, A. (2022, April 1). Survey on Malicious URL Detection Techniques. IEEE Xplore. https://doi.org/10.1109/ICOEI53556.2022.9777221",
+    "Tsai, Y., Liow, C., Siang, Y. S., & Lin, S. (2024). Toward more generalized malicious URL detection models. Proceedings of the AAAI Conference on Artificial Intelligence, 38(19), 21628–21636. https://doi.org/10.1609/aaai.v38i19.30161",
+    "Aalla, H. V. S., Dumpala, N. R., & Eliazer, M. (2021). Malicious URL Prediction Using Machine Learning Techniques. Annals of the Romanian Society for Cell Biology, 25(5), 2170-2176. https://www.proquest.com/scholarly-journals/malicious-url-prediction-using-machine-learning/docview/2564188868/se-2",
+    "Wu, T., Wang, M., Xi, Y., & Zhao, Z. (2022). Malicious URL detection model based on bidirectional gated recurrent unit and attention mechanism. Applied Sciences, 12(23), 12367. https://doi.org/10.3390/app122312367",
+    "Sarhan, M., Layeghy, S., Moustafa, N., Gallagher, M., & Portmann, M. (2022). Feature extraction for machine learning-based intrusion detection in IoT networks. Digital Communications and Networks, 10(1), 205–216. https://doi.org/10.1016/j.dcan.2022.08.012",
+    "Türk, F., & Kılıçaslan, M. (2025). Malicious URL Detection with Advanced Machine Learning and Optimization-Supported Deep Learning Models. Applied Sciences, 15(18), 10090. https://doi.org/10.3390/app151810090",
+    "APPENDICES",
+    "Appendix A: Meeting Logs 1-6",
+    "Appendix B: Technical Paper",
+    "Student’s Signature & Date",
+    "CHONG YOU XIN, 18.06.2026"
+  ],
+  "tables_sample": [
+    [
+      [
+        "Study",
+        "URL Features",
+        "HTML/DOM Features",
+        "Visual Features",
+        "Key Strength",
+        "Key Limitations"
+      ],
+      [
+        "Tian et al. (2025)",
+        "Yes",
+        "Yes",
+        "Yes",
+        "Broad survey of malicious URL techniques, datasets, and code repositories",
+        "Survey-level evidence; does not implement this prototype"
+      ],
+      [
+        "Wu et al. (2022)",
+        "Yes",
+        "No",
+        "No",
+        "BiGRU-attention model captures URL sequence patterns",
+        "Higher model complexity and lower interpretability"
+      ],
+      [
+        "Türk & Kılıçaslan (2025)",
+        "Yes",
+        "Limited",
+        "Limited",
+        "Compares advanced ML and optimisation-supported deep learning",
+        "Advanced models may be heavier for real-time deployment"
+      ],
+      [
+        "Liang (2026)",
+        "Yes",
+        "No",
+        "No",
+        "Multi-scale URL anomaly detection improves URL representation learning",
+        "Requires more validation before use in a lightweight prototype"
+      ]
+    ],
+    [
+      [
+        "Model Type",
+        "Accuracy",
+        "Interpretability",
+        "Computational Cost",
+        "Suitability for Real-time"
+      ],
+      [
+        "Logistic Regression / SVM",
+        "Medium to high",
+        "Medium to high",
+        "Low to medium",
+        "High"
+      ],
+      [
+        "Random Forest / Gradient Boosting",
+        "High",
+        "Medium to high",
+        "Medium",
+        "High"
+      ],
+      [
+        "BiGRU / LSTM with attention",
+        "High",
+        "Low to medium",
+        "High",
+        "Medium"
+      ],
+      [
+        "Multi-scale or transformer-style deep models",
+        "Very high in suitable datasets",
+        "Low",
+        "Very high",
+        "Low to medium"
+      ]
+    ],
+    [
+      [
+        "Deployment Method",
+        "Advantages",
+        "Limitations"
+      ],
+      [
+        "Browser Extension",
+        "Immediate user feedback; supports warning page, caution banner, and user override",
+        "API Constraints"
+      ],
+      [
+        "Proxy-based System",
+        "Centralized traffic inspection enables more detailed network analysis",
+        "Demands certificate setup, configuration effort. Safety testing grows complicated under such conditions"
+      ],
+      [
+        "Server-side Filter",
+        "Powerful central analysis and policy control",
+        "Higher latency and less direct user-facing interaction"
+      ]
+    ],
+    [
+      [
+        "Class",
+        "Number of URLs"
+      ],
+      [
+        "Benign",
+        "899"
+      ],
+      [
+        "Malicious",
+        "300"
+      ],
+      [
+        "Total",
+        "1,199"
+      ]
+    ],
+    [
+      [
+        "Label",
+        "Description"
+      ],
+      [
+        "0",
+        "Benign URL"
+      ],
+      [
+        "1",
+        "Malicious URL"
+      ]
+    ],
+    [
+      [
+        "Parameter",
+        "Value"
+      ],
+      [
+        "Test Size",
+        "20%"
+      ],
+      [
+        "Training Size",
+        "80%"
+      ],
+      [
+        "Stratification",
+        "Enabled"
+      ],
+      [
+        "Random State",
+        "42"
+      ]
+    ],
+    [
+      [
+        "Dataset",
+        "Benign",
+        "Malicious",
+        "Total"
+      ],
+      [
+        "Training Set",
+        "719",
+        "240",
+        "959"
+      ],
+      [
+        "Testing Set",
+        "180",
+        "60",
+        "240"
+      ]
+    ],
+    [
+      [
+        "Dataset",
+        "Benign",
+        "Malicious"
+      ],
+      [
+        "Training",
+        "719",
+        "240"
+      ],
+      [
+        "Testing",
+        "180",
+        "60"
+      ]
+    ],
+    [
+      [
+        "Feature Category",
+        "Number of Features"
+      ],
+      [
+        "Lexical Features",
+        "13"
+      ],
+      [
+        "Security Indicators",
+        "6"
+      ],
+      [
+        "Trust Features",
+        "1"
+      ],
+      [
+        "Brand-Impersonation Features",
+        "2"
+      ],
+      [
+        "Total",
+        "22"
+      ]
+    ],
+    [
+      [
+        "Parameter",
+        "Value"
+      ],
+      [
+        "n_estimators",
+        "100"
+      ],
+      [
+        "learning_rate",
+        "0.1"
+      ],
+      [
+        "criterion",
+        "friedman_mse"
+      ],
+      [
+        "loss",
+        "log_loss"
+      ],
+      [
+        "subsample",
+        "1.0"
+      ],
+      [
+        "min_samples_split",
+        "2"
+      ],
+      [
+        "min_samples_leaf",
+        "1"
+      ],
+      [
+        "random_state",
+        "42"
+      ]
+    ]
+  ],
+  "core": {
+    "title": "",
+    "author": "User",
+    "last_modified_by": "CHONG YOU XIN",
+    "created": "2026-01-21 08:59:00+00:00",
+    "modified": "2026-06-17 15:24:00+00:00"
+  }
+}

@@ -35,7 +35,7 @@ from sklearn.svm import SVC
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 BACKEND_DIR = os.path.dirname(SRC_DIR)
 REPORT_DIR = os.path.join(BACKEND_DIR, "reports")
-HARD_NEGATIVE_PATH = os.path.join(BACKEND_DIR, "data", "raw", "official_hard_negatives.csv")
+HARD_NEGATIVE_PATH = os.path.join(BACKEND_DIR, "data", "evaluation", "official_hard_negatives_eval.csv")
 SELECTED_THRESHOLD = 0.90
 
 if SRC_DIR not in sys.path:
@@ -119,7 +119,7 @@ def evaluate_main_split(model_name: str, model, X_train, X_test, y_train, y_test
 
 
 def evaluate_hard_negatives(model_name: str, fitted_model, feature_columns: list[str], csv_path: str) -> dict[str, Any]:
-    """Evaluate false positives on official hard-negative benign URLs."""
+    """Evaluate false positives on held-out official hard-negative benign URLs."""
     raw_df = pd.read_csv(csv_path)
     X, y, valid_df = build_feature_frame(raw_df)
     X = X.reindex(columns=feature_columns, fill_value=0)
@@ -226,7 +226,7 @@ def write_summary(main_df: pd.DataFrame, hard_df: pd.DataFrame, threshold_df: pd
         f.write("# Model Comparison Summary\n\n")
         f.write("## Main Dataset Comparison\n\n")
         f.write(markdown_table(main_df))
-        f.write("\n\n## Hard-Negative Benign Comparison\n\n")
+        f.write("\n\n## Held-Out Hard-Negative Benign Comparison\n\n")
         f.write(markdown_table(hard_df))
         f.write(f"\n\n## {deployed_model} Threshold Analysis\n\n")
         f.write(markdown_table(threshold_df))
@@ -236,7 +236,7 @@ def write_summary(main_df: pd.DataFrame, hard_df: pd.DataFrame, threshold_df: pd
             f"- Selected extension block threshold: **{SELECTED_THRESHOLD:.2f}**.\n"
             f"- At threshold {SELECTED_THRESHOLD:.2f}, the deployed {deployed_model} model achieved "
             f"{threshold_row['main_malicious_recall']:.2%} malicious recall on the main hold-out split "
-            f"while keeping the curated hard-negative benign false-positive rate at "
+            f"while keeping the held-out hard-negative benign false-positive rate at "
             f"{threshold_row['hard_negative_fp_rate']:.2%}.\n"
             "- This threshold therefore balances user-facing false-positive reduction with strong detection recall "
             "for the FYP 2 demonstration.\n"

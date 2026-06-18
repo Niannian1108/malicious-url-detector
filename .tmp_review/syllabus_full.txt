@@ -1,0 +1,312 @@
+
+--- PAGE 1 ---
+1 .
+2 .
+3 .
+4 .
+5 .
+6 .
+7 .
+8 .
+9 .
+P
+L
+O
+1
+P
+L
+O
+2
+P
+L
+O
+3
+P
+L
+O
+4
+P
+L
+O
+5
+P
+L
+O
+6
+P
+L
+O
+7
+P
+L
+O
+8
+P
+L
+O
+9
+P
+L
+O
+1
+0
+P
+L
+O
+1
+1
+
+
+
+
+1 1 1 1
+15 .
+*L *T *P *O
+1 1
+2
+Project consultation
+Consult the supervisor on the comments and 
+improvement need to be made and continue FYP 2 
+development from previous FYP 1.
+Project activity 1
+Student is expected to be involved in technical or write 
+up  coding or algorithm development using one or more 
+programming languages to develop the proposed 
+solution or produced technical report and document by 
+the industries..
+FINAL YEAR PROJECT 2
+TPR6323
+Trimester and Year Offered
+Objective of the course in the programme:
+Trimester 2, Year 3
+3
+TPR6313 FINAL YEAR PROJECT 1
+Name of Course
+Course Code
+Name(s) of Academic Staff
+8 8
+Liew Tze Hui
+Goh Kah Ong Michael
+All academic staff
+Level
+Credit Value
+Pre-Requisite
+COURSE INFORMATION
+DomainCourse Learning Outcomes (CLO)
+CLO1: Internalise technical and entrepreneurial skills with normative competency to 
+deliver responsible, innovative, impactful project solutions.
+Teaching Methods Assessment Method
+CLO1
+CLO3
+CLO4
+Individual study
+Individual study
+Project Implementation
+3, 4
+10 .
+.11
+.
+**CLO
+Teaching and 
+Learning ActivitiesGuided 
+Learning 
+(NF2F)*
+Psychomotor
+Cognitive 
+Total
+13 .
+12
+14 .
+Course Content Outline
+Individual study
+CLO2: Demonstrate self-awareness, clarity, and professionalism when presenting 
+the completed project to audiences. Affective 3
+CLO2 Individual study Presentation
+Indicate the relevancy between the CLO and PLO by ticking “” the appropriate relevant 
+box (This description must be read together with standards 2.1.2, 2.2.1, and 2.2.2 in Area 2 
+– pages 16 & 18 of COPPA 2.0)
+Programme Learning Outcomes (PLO)
+Observation
+Final Report
+Distribution of Student Learning Time (SLT)
+Transferable Skills:
+Digital and numeracy skills, ethics and professionalism, personal and entrepreneurship skills, interpersonal and communication skills
+6
+CLO3:
+CLO4:
+2 3
+Guided Learning 
+(F2F)*
+1, 3, 4
+Type of Course
+(e.g. : Core, major, elective etc.)
+Synopsis
+Version
+(State the date of theSenate’s approval - previous and the current approval date)
+Affective 
+1. To strengthen project management and self-learning skills with a positive attitude while executing the project activities.
+2. To demonstrate the completed project with clarity and be able to communicate professionally with the audience.
+3. To expand the interim report into a complete final report with critical evaluation and performance analysis using a systematic approach to implementing solutions for the 
+project with technical contributions and entrepreneurial skills.
+4. To determine the technical development tasks, critical evaluations, performance analysis and data representation for effective project solution implementation.
+Justification for including the course in the programme:
+The final year project serves as the culminating experience of a degree program. Students will expand their project development in accordance with the plan defined in Project 
+1 and engage in technical programming, problem-solving, troubleshooting, system/module integration, implementation, testing, performance analysis, conducting experiments, 
+and result evaluation. Students are also required to communicate regularly with their respective supervisors to report the progress of their projects. Through this course, 
+students will acquire knowledge and skills in research or application development methodologies related to the project title and prepare a complete final report. At the end of 
+the trimester, students must submit a complete final report and present their project findings and results to the supervisor and panel.
+Specialisation Core for:
+B.IT (Hons) Data Communications and Networking
+B.IT (Hons) Information Technology Management
+B.IT (Hons) Artificial Intelligence
+B.IT (Hons) Security Technology
+B.IT (Hons) Business Intelligence and Analytics
+B.CS (Hons) Artificial Intelligence
+Final Year Project 2 is the final part of the TWO-PART final year project that every 
+student must successfully complete. Students will expand their project development 
+in accordance with the plan defined in Final Year Project 1 and engage in technical 
+programming, problem-solving, troubleshooting, system/module integration, 
+implementation, testing, performance analysis, conducting experiments, and result 
+evaluation. Students are also required to communicate regularly with their 
+respective supervisors to report the progress of their projects. Through this course, 
+students will acquire knowledge and skills in research or application development 
+methodologies related to the project title and prepare a complete final report.
+Current: November 2025
+            Previous: October 2024
+Course Learning 
+Outcomes (CLO)
+(Must tally with CLOs in 
+item 12)
+4
+3
+Mapping of the Course Learning Outcomes to the Programme Learning Outcomes, Teaching Methods and Assessment:
+Apply digital tools with precision and consistency to produce, document, and 
+present the final project solution.
+Develop technical development tasks, evaluations, and performance 
+analyses for effective implementation of innovative project solutions.
+Independent 
+Learning 
+(NF2F)*
+Total SLT
+ACAD/FORM/01
+Ver. 3.0
+26.01.2022 1
+
+--- PAGE 2 ---
+3 1
+4
+5 1
+6
+7 1
+8
+9 1
+10
+11 1
+12
+13
+Note:
+Project activity 2
+Some results technical or interface of the proposed 
+solution start forming and results started to show 
+improvement etc.
+Cells shaded light grey contain formulas / fixed values. Edit these formulas only if needed.
+2. Final Assessment Percentage %
+Main References:
+1. Tengiz Tutisani, "Effective Software Development for the Enterprise", 2023, Apress Berkeley, CA, ISBN: 978-1-4842-9387-4
+2. John F. Dooley, "Software Development, Design and Coding - 2nd edition", 2017, Apress Berkeley, CA, ISBN: 978-1-4842-3152-4
+Additional References:
+Final report preparation 1
+Gather all the work and prepare writeup for the final 
+report, define the remining chapter titles, subtitles, 
+technical writeup etc.
+Final report preparation 2
+Generate complete results, organise data, diagrams, 
+write project details, project content writeup, result 
+analysis etc.
+Final report submission
+Finalising final report using appropriate format for 
+submission, prepare for presentation, finalised 
+technical writeup  etc.
+Project activity 4
+Completed several technical tasks, modules or 
+program components and ready to be integrated etc.
+3, 4
+1. David Kung, "Software Engineering, 2nd Edition", 2023, McGraw Hill, ISBN10: 1264556950
+2. Jim Highsmith, "Software Development from the Wild West to Agile, 1st edition", 2023, Addison-Wesley, ISBN10:  0137961006
+Identify Special Requirement to Deliver the Course (e.g., software, nursery, computer lab, simulation room):
+None
+**Indicate the CLO based on the CLO’s numbering in Item 12.
+ *L= Lecture, *T= Tutorial, *P= Practical, *O= Others, F2F*= Face to Face, NF2F*= Non Face to Face 
+Presentation
+Arrange schedule with supervisor and panel for project 
+presentation
+88
+1. Continuous Assessment
+Experimental testing
+Conduct proper software or unit testing, testing the 
+interface, input/output, evaluate generated results etc.
+Performance analysis
+It involves measuring and analysing various 
+performance metrics to identify strengths and 
+weaknesses of each system, product, or service and to 
+determine which one performs better.
+Result analysis and discussion
+Examining the findings of a study or experiment and 
+interpreting the results in order to draw meaningful 
+conclusions. 
+Total SLT
+8 83, 4
+2
+Project activity 3
+Finalising technical content, data structure, classes, 
+attributes for components and processes, component 
+testing, Fine-tuning algorithms, validating component 
+results etc. which are relevant to the project
+Project integration 
+Integrate several components into a complete system 
+or modules for testing and performance analysis, data 
+training etc.
+101
+3, 4
+1, 3, 4
+120Grand Total
+50%
+10%
+Percentage %
+Total SLT for Continuous Assessment 5
+Total SLT
+100%
+Total SLT for Final Assessment (F2F + NF2F)
+1Project Implementation
+ILT
+10
+Total SLT
+Presentation
+30%
+2
+8 8
+1, 3, 4
+8 9
+8 8
+8 9
+Observation
+F2F
+SUMMATIVE ASSESSMENT
+8 9
+5 5
+16
+17
+18
+1, 3, 4
+1, 3, 4 8 9
+3, 4 8 8
+8 91, 3, 4
+14
+4
+1
+Final Report 10%
+3, 4
+1
+ACAD/FORM/01
+Ver. 3.0
+26.01.2022 2

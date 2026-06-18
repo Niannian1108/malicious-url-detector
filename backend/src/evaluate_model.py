@@ -6,7 +6,7 @@ false positives, especially on legitimate but "phishy-looking" benign URLs.
 
 Usage:
     python backend/src/evaluate_model.py
-    python backend/src/evaluate_model.py --csv backend/data/raw/official_hard_negatives.csv
+    python backend/src/evaluate_model.py --csv backend/data/evaluation/official_hard_negatives_eval.csv
     python backend/src/evaluate_model.py --threshold 0.95
 """
 
@@ -22,8 +22,9 @@ from sklearn.metrics import classification_report, confusion_matrix, roc_auc_sco
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 BACKEND_DIR = os.path.dirname(SRC_DIR)
 RAW_DATA_DIR = os.path.join(BACKEND_DIR, "data", "raw")
+EVALUATION_DATA_DIR = os.path.join(BACKEND_DIR, "data", "evaluation")
 MODEL_PATH = os.path.join(BACKEND_DIR, "models", "model_v1.joblib")
-DEFAULT_FALSE_POSITIVE_PATH = os.path.join(RAW_DATA_DIR, "official_hard_negatives.csv")
+DEFAULT_FALSE_POSITIVE_PATH = os.path.join(EVALUATION_DATA_DIR, "official_hard_negatives_eval.csv")
 
 if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
@@ -140,7 +141,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--csv",
         action="append",
-        help="Path to a labeled CSV file. Repeat for multiple files. Defaults to the hard-negative benign set.",
+        help="Path to a labeled CSV file. Repeat for multiple files. Defaults to the held-out hard-negative benign set.",
     )
     parser.add_argument(
         "--threshold",

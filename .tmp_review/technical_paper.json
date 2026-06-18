@@ -1,0 +1,319 @@
+{
+  "paragraph_count": 53,
+  "table_count": 7,
+  "word_count_approx": 2051,
+  "headings_like": [
+    "INTRODUCTION",
+    "RELATED WORK",
+    "METHODOLOGY",
+    "SYSTEM DESIGN",
+    "RESULTS AND EVALUATION",
+    "DISCUSSION",
+    "FUTURE WORKS",
+    "CONCLUSION",
+    "ACKNOWLEDGMENTS",
+    "REFERENCES"
+  ],
+  "first_80_paragraphs": [
+    "Machine Learning Based Malicious Website Detection and Response System",
+    "You Xin Chong",
+    "Faculty of Information Science and Technology, Multimedia University, Melaka, Malaysia",
+    "1211108623@student.mmu.edu.my",
+    "Abstract. Malicious and phishing websites remain a common route for credential theft, malware delivery, brand impersonation, and user compromise. In this paper, we propose a system for malicious website detection and response system based on machine learning, engineered URL features, light runtime evidence, a FastAPI inference back-end, and a Chrome extension-based response layer. We transformed a dataset that contained 1,199 URLs (899 benign samples and 300 malicious samples) into a set of 22 lexical, security, trust, and brand impersonation features. To compare, four supervised models were evaluated and the model with the highest accuracy (99.17%), precision (98.33%), recall (98.33%), F1-score (98.33%) and ROC-AUC (99.53%) on the held-out test set was chosen for deployment, namely Gradient Boosting. The benign false positive rate was lowered to 0.00% with 96.67% malicious recall and 100.00% malicious precision with deployment threshold tuning. The resulting prototype gives the appropriate responses from the browser such as \"allowed\", \"caution\", as well as \"warning/block\" pages, and logs prediction events for analysis.",
+    "INTRODUCTION",
+    "Users and organisations are still at risk of phishing and malicious websites as attackers are able to quickly register new domains, mimic trusted brands and change the URL structure to look legitimate. Blacklisting only defences are reactive and useful but they can be ineffective if a new site is created or if the attacker changes URLs quicker than reputation feeds can change [1,2]. Machine learning is thus a viable complement, as it can learn the normal behaviour from labelled benign and malicious URLs.",
+    "This project does not use a stand-alone classifier, but rather a complete prototype of detection and response. It is a system that performs feature extraction, model inference, severity classification, runtime page evidence, optional VirusTotal reputation verification, and browser-level action. It’s primary objective is to detect malicious websites in real time and to take action accordingly, maintaining browser safety and being helpful to the user.",
+    "This work is structured around two goals: designing and developing a machine learning (ML) model to classify whether a website is malicious or not using its URL structure and website attributes, and second is to create a working prototype system that integrates the website detection with automatic response. The purpose of the paper is to present how these goals are addressed in the design of features, selection of models, the deployment of the browser extension, the threshold tuning, and the function verification.",
+    "RELATED WORK",
+    "Previous studies have investigated lexical characteristics of URLs, domain characteristics, content of the web page, external reputation indicators, and deep sequence models in the context of malicious URL detection [1,3,4]. Fine-grained URL sequences can be represented by recurrent and attention-based architectures [5] and classical models are still competitive in the case of well-designed classical features [6,7] compared with machine learning studies. Recent work also points to adverse issues like evasion, label flipping and feature manipulation, hence the need for open feature selection and strong assessment in design is important [8,9].",
+    "This work focuses on the gap regarding the issue of operational integration. Many studies focus on optimising classification results, but less on how a detection result translates into a user facing response. This project shall focus on a lightweight model that can be implemented as a browser extension and a backend service where the level of confidence in the classification along with supporting evidence will dictate whether the user can pass, get warned, or blocked when visiting an URL.",
+    "TABLE 1. Summary of the implemented dataset.",
+    "METHODOLOGY",
+    "Dataset Preparation",
+    "The supervised dataset consisted of benign URLs, public malicious or phishing URL feeds, and hard negative benign URLs that can be suspected as malicious URLs since they include login, account or security related paths. The hard-negative samples were added to minimise false alarms on legitimate services. A random state of 42 was used to make an 80:20 train-test split of the data set.",
+    "TABLE 2. Stratified train-test distribution.",
+    "Feature Engineering",
+    "22 structured features were created for each URL. Lexical features relate to observed URL structure, security features detect unusual technical activity, trust features lower the volume of false-positive URLs on known legitimate domains and brand impersonation features detect mismatches between brand keywords and the website domain.",
+    "TABLE 3. Engineered feature categories.",
+    "Model Development",
+    "4 supervised algorithms were trained and evaluated with the same data split: Logistic Regression, Support Vector Machine with RBF kernel, Random Forest and Gradient Boosting. Gradient Boosting was chosen as it had the best accuracy, precision, recall, ROC-AUC, and lowest error count across all models, was easily interpretable, and was also suitable for deployment in the backend.",
+    "TABLE 4. Machine learning model comparison on the held-out test set.",
+    "SYSTEM DESIGN",
+    "The architecture implemented is a separation of the browser facing interaction and subsequent machine learning inference. The Chrome extension captures the current URL and sends it to a FastAPI backend. The back-end extracts features and loads the deployed Gradient Boosting classifier, uses the model probability internally to make predictions, and return the predictions after a lightweight adjustment with a combined risk score. The outcome is then fed through a risk assessment layer and the appropriate response is then shown in the browser by the extension.",
+    "The response layer specifies three severities of operation. Low-risk pages are allowed without interruption. Medium risk pages emit a warning message to let the user know that they should be careful. A warning or block page is triggered on high-risk pages, which has limited support for user override. Additional risk factors can be strengthened by runtime DOM evidence, such as password fields, forms, hidden iframes, external scripts, phishing related text, and phishing-related brand-domain mismatch. When you choose to enable it for suspicious local results, it provides reputation context, and when selected, SQLite-logging tracks prediction events for review. The extension also has a temporary, small trusted domain allow list for well-known sites like Google, GitHub, Microsoft, etc. to avoid unnecessary disruptions during prototype testing.",
+    "TABLE 5. Runtime risk classification and response.",
+    "This design is supported by the codebase through the following modules: feature extraction, model training, model comparison, FastAPI prediction, reputation checking, SQLite logging, and chrome extension interaction. Navigation monitoring, DOM-assisted analysis, caution banners, notifications, warning page, go-back handling, and proceed-once override are implemented in the extension. This separation of concerns allows for greater maintainability, easier testability and demonstration of the prototype.",
+    "RESULTS AND EVALUATION",
+    "The Gradient Boosting classifier’s production of false positive and false negative count on the test set is 1 and 1 respectively. Both URL structure and trust-aware features were proven critical to the final decision as demonstrated by the most influential features, which included host_length, is_known_trusted_domain, url_length, num_digits, and num_dots. Due to avoiding warning fatigue, tuning of deployment thresholds was carried out following baseline model evaluation.",
+    "TABLE 6. Selected feature importance values.",
+    "The system achieved 96.67% malicious recall and 0.00% benign false positive at the deployed high-risk threshold (0.90) on the main evaluation set. 42 legitimate URLs that were identified as security sensitive were evaluated with a separate hard-negative, and they were all identified as harmless. The rest of the functional tests were successful as well: the browser extension, the prediction request on the backend, the risk classification, the warning/block behaviour, the VirusTotal lookup and the event logging were all correct.",
+    "TABLE 7. Deployment threshold and hard-negative evaluation results.",
+    "DISCUSSION",
+    "The results demonstrate that a classical ensemble model having well-designed features can be effective in real-time detection prototype of malicious websites. This high ROC-AUC, low false-positive rate, and hard-negative resistance is especially significant when using a browser extension as it could cause loss of user confidence if too many warnings are issued. The deployment threshold sacrifices some recall for a more pleasant user experience as only high-risk warnings will be issued when model confidence is high.",
+    "The primary constraint is size of the data sets. The 1,199-URL data set could be used to test a prototype at the end of the third year but a larger, more up-to-date data set would be required for production. The system places strong focus on URL-based and shallow behavioural analysis rather than deep behavioural analysis, certificate-chain analysis, redirect-chain modelling, or enterprise-scale telemetry. Further testing of privacy safeguards for logging and reputation checks on external sources should be enhanced before wider roll-out.",
+    "FUTURE WORKS",
+    "Future work should involve an expansion of the collection, a more formal representation of the versions of the datasets, automate updates of the collection from trusted benign and malicious feeds, and test the detector with a larger set of representative real-world phishing and hard-negative benign pages. The detection layer can be expanded with redirect-chain analysis, certificate indicators, richer page content parsing and privacy preserving local log and external reputation lookups. These instructions would make the prototype more robust, yet still keep the project's primary design dictates of being transparent and real-time, which users are able to comprehend.",
+    "CONCLUSION",
+    "This paper introduced an ML approach for malicious website detection and response system beyond simply offline classification by incorporating the predictions of the models into a working browser protection workflow. The Gradient Boosting model performed well in the test set with an accuracy of 99.17%, high precision, recall, F1-score and ROC-AUC scores. The deployed configuration was shown to be able to reduce the number of false positives while providing meaningful detection of malicious URLs through the use of threshold tuning and hard-negative testing. The prototype thus successfully fulfils the two objectives of the project: to design and develop a machine learning model that identifies if a website is malicious or legitimate based on URL and the website features, and to build a prototype system that integrates detection and provides automated responses accordingly. The prototype shows an approach of real-time malicious website detection, practical and transparent, from a chrome extension to a backend using FastAPI, severity-based response, optional verification of the reputation and local prediction logging.",
+    "ACKNOWLEDGMENTS",
+    "The author thanks the Faculty of Information Science and Technology, Multimedia University, for the opportunity and platform provided to participate in this project. Gratitude is also presented to Prof. Ts. Dr. Heng Swee Huay for project guidance and support throughout the final-year project.",
+    "REFERENCES",
+    "1. Y. Tian, Y. Yu, J. Sun, and Y. Wang, From past to present: A survey of malicious URL detection techniques, datasets, and code repositories, arXiv:2504.16449 (2025).",
+    "2. F. Turk and M. Kilicaslan, Malicious URL detection with advanced machine learning and optimization-supported deep learning models, Applied Sciences 15, 10090 (2025).",
+    "3. Q. E. Haq, M. H. Faheem, and I. Ahmad, Detecting phishing URLs based on a deep learning approach to prevent cyber-attacks, Applied Sciences 14, 10086 (2024).",
+    "4. L. Zhang and Q. Yan, Detect malicious websites by building a neural network to capture global and local features of websites, Computers & Security 137, 103641 (2023).",
+    "5. T. Wu, M. Wang, Y. Xi, and Z. Zhao, Malicious URL detection model based on bidirectional gated recurrent unit and attention mechanism, Applied Sciences 12, 12367 (2022).",
+    "6. X. Guo, Evaluation on malicious URL detection with different features based on various machine learning algorithms, in Proceedings of the 12th International Conference on Data Science, pp. 543-550 (SCITEPRESS, 2023).",
+    "7. M. Adam, S. F. Nasution, R. R. Simanungkalit, and I. H. Diansyah, Machine learning-driven detection of malicious URL: Comparative analysis of random forest and SVMs, JITE 8 (2024).",
+    "8. E. Nowroozi, A. M., M. Mohammadi, and M. Conti, An adversarial attack analysis on malicious advertisement URL detection framework, arXiv:2204.13172 (2022).",
+    "9. E. Nowroozi, N. Jadalla, S. Ghelichkhani, and A. Jolfaei, Mitigating label-flipping attacks in malicious URL detectors using ensemble trees, arXiv:2403.02995 (2024).",
+    "10. S. Aslam, H. Aslam, A. Manzoor, C. Hui, and A. Rasool, AntiPhishStack: LSTM-based stacked generalization model for optimized phishing URL detection, arXiv:2401.08947 (2024)."
+  ],
+  "last_40_paragraphs": [
+    "METHODOLOGY",
+    "Dataset Preparation",
+    "The supervised dataset consisted of benign URLs, public malicious or phishing URL feeds, and hard negative benign URLs that can be suspected as malicious URLs since they include login, account or security related paths. The hard-negative samples were added to minimise false alarms on legitimate services. A random state of 42 was used to make an 80:20 train-test split of the data set.",
+    "TABLE 2. Stratified train-test distribution.",
+    "Feature Engineering",
+    "22 structured features were created for each URL. Lexical features relate to observed URL structure, security features detect unusual technical activity, trust features lower the volume of false-positive URLs on known legitimate domains and brand impersonation features detect mismatches between brand keywords and the website domain.",
+    "TABLE 3. Engineered feature categories.",
+    "Model Development",
+    "4 supervised algorithms were trained and evaluated with the same data split: Logistic Regression, Support Vector Machine with RBF kernel, Random Forest and Gradient Boosting. Gradient Boosting was chosen as it had the best accuracy, precision, recall, ROC-AUC, and lowest error count across all models, was easily interpretable, and was also suitable for deployment in the backend.",
+    "TABLE 4. Machine learning model comparison on the held-out test set.",
+    "SYSTEM DESIGN",
+    "The architecture implemented is a separation of the browser facing interaction and subsequent machine learning inference. The Chrome extension captures the current URL and sends it to a FastAPI backend. The back-end extracts features and loads the deployed Gradient Boosting classifier, uses the model probability internally to make predictions, and return the predictions after a lightweight adjustment with a combined risk score. The outcome is then fed through a risk assessment layer and the appropriate response is then shown in the browser by the extension.",
+    "The response layer specifies three severities of operation. Low-risk pages are allowed without interruption. Medium risk pages emit a warning message to let the user know that they should be careful. A warning or block page is triggered on high-risk pages, which has limited support for user override. Additional risk factors can be strengthened by runtime DOM evidence, such as password fields, forms, hidden iframes, external scripts, phishing related text, and phishing-related brand-domain mismatch. When you choose to enable it for suspicious local results, it provides reputation context, and when selected, SQLite-logging tracks prediction events for review. The extension also has a temporary, small trusted domain allow list for well-known sites like Google, GitHub, Microsoft, etc. to avoid unnecessary disruptions during prototype testing.",
+    "TABLE 5. Runtime risk classification and response.",
+    "This design is supported by the codebase through the following modules: feature extraction, model training, model comparison, FastAPI prediction, reputation checking, SQLite logging, and chrome extension interaction. Navigation monitoring, DOM-assisted analysis, caution banners, notifications, warning page, go-back handling, and proceed-once override are implemented in the extension. This separation of concerns allows for greater maintainability, easier testability and demonstration of the prototype.",
+    "RESULTS AND EVALUATION",
+    "The Gradient Boosting classifier’s production of false positive and false negative count on the test set is 1 and 1 respectively. Both URL structure and trust-aware features were proven critical to the final decision as demonstrated by the most influential features, which included host_length, is_known_trusted_domain, url_length, num_digits, and num_dots. Due to avoiding warning fatigue, tuning of deployment thresholds was carried out following baseline model evaluation.",
+    "TABLE 6. Selected feature importance values.",
+    "The system achieved 96.67% malicious recall and 0.00% benign false positive at the deployed high-risk threshold (0.90) on the main evaluation set. 42 legitimate URLs that were identified as security sensitive were evaluated with a separate hard-negative, and they were all identified as harmless. The rest of the functional tests were successful as well: the browser extension, the prediction request on the backend, the risk classification, the warning/block behaviour, the VirusTotal lookup and the event logging were all correct.",
+    "TABLE 7. Deployment threshold and hard-negative evaluation results.",
+    "DISCUSSION",
+    "The results demonstrate that a classical ensemble model having well-designed features can be effective in real-time detection prototype of malicious websites. This high ROC-AUC, low false-positive rate, and hard-negative resistance is especially significant when using a browser extension as it could cause loss of user confidence if too many warnings are issued. The deployment threshold sacrifices some recall for a more pleasant user experience as only high-risk warnings will be issued when model confidence is high.",
+    "The primary constraint is size of the data sets. The 1,199-URL data set could be used to test a prototype at the end of the third year but a larger, more up-to-date data set would be required for production. The system places strong focus on URL-based and shallow behavioural analysis rather than deep behavioural analysis, certificate-chain analysis, redirect-chain modelling, or enterprise-scale telemetry. Further testing of privacy safeguards for logging and reputation checks on external sources should be enhanced before wider roll-out.",
+    "FUTURE WORKS",
+    "Future work should involve an expansion of the collection, a more formal representation of the versions of the datasets, automate updates of the collection from trusted benign and malicious feeds, and test the detector with a larger set of representative real-world phishing and hard-negative benign pages. The detection layer can be expanded with redirect-chain analysis, certificate indicators, richer page content parsing and privacy preserving local log and external reputation lookups. These instructions would make the prototype more robust, yet still keep the project's primary design dictates of being transparent and real-time, which users are able to comprehend.",
+    "CONCLUSION",
+    "This paper introduced an ML approach for malicious website detection and response system beyond simply offline classification by incorporating the predictions of the models into a working browser protection workflow. The Gradient Boosting model performed well in the test set with an accuracy of 99.17%, high precision, recall, F1-score and ROC-AUC scores. The deployed configuration was shown to be able to reduce the number of false positives while providing meaningful detection of malicious URLs through the use of threshold tuning and hard-negative testing. The prototype thus successfully fulfils the two objectives of the project: to design and develop a machine learning model that identifies if a website is malicious or legitimate based on URL and the website features, and to build a prototype system that integrates detection and provides automated responses accordingly. The prototype shows an approach of real-time malicious website detection, practical and transparent, from a chrome extension to a backend using FastAPI, severity-based response, optional verification of the reputation and local prediction logging.",
+    "ACKNOWLEDGMENTS",
+    "The author thanks the Faculty of Information Science and Technology, Multimedia University, for the opportunity and platform provided to participate in this project. Gratitude is also presented to Prof. Ts. Dr. Heng Swee Huay for project guidance and support throughout the final-year project.",
+    "REFERENCES",
+    "1. Y. Tian, Y. Yu, J. Sun, and Y. Wang, From past to present: A survey of malicious URL detection techniques, datasets, and code repositories, arXiv:2504.16449 (2025).",
+    "2. F. Turk and M. Kilicaslan, Malicious URL detection with advanced machine learning and optimization-supported deep learning models, Applied Sciences 15, 10090 (2025).",
+    "3. Q. E. Haq, M. H. Faheem, and I. Ahmad, Detecting phishing URLs based on a deep learning approach to prevent cyber-attacks, Applied Sciences 14, 10086 (2024).",
+    "4. L. Zhang and Q. Yan, Detect malicious websites by building a neural network to capture global and local features of websites, Computers & Security 137, 103641 (2023).",
+    "5. T. Wu, M. Wang, Y. Xi, and Z. Zhao, Malicious URL detection model based on bidirectional gated recurrent unit and attention mechanism, Applied Sciences 12, 12367 (2022).",
+    "6. X. Guo, Evaluation on malicious URL detection with different features based on various machine learning algorithms, in Proceedings of the 12th International Conference on Data Science, pp. 543-550 (SCITEPRESS, 2023).",
+    "7. M. Adam, S. F. Nasution, R. R. Simanungkalit, and I. H. Diansyah, Machine learning-driven detection of malicious URL: Comparative analysis of random forest and SVMs, JITE 8 (2024).",
+    "8. E. Nowroozi, A. M., M. Mohammadi, and M. Conti, An adversarial attack analysis on malicious advertisement URL detection framework, arXiv:2204.13172 (2022).",
+    "9. E. Nowroozi, N. Jadalla, S. Ghelichkhani, and A. Jolfaei, Mitigating label-flipping attacks in malicious URL detectors using ensemble trees, arXiv:2403.02995 (2024).",
+    "10. S. Aslam, H. Aslam, A. Manzoor, C. Hui, and A. Rasool, AntiPhishStack: LSTM-based stacked generalization model for optimized phishing URL detection, arXiv:2401.08947 (2024)."
+  ],
+  "tables_sample": [
+    [
+      [
+        "Class",
+        "Number of URLs"
+      ],
+      [
+        "Benign",
+        "899"
+      ],
+      [
+        "Malicious",
+        "300"
+      ],
+      [
+        "Total",
+        "1,199"
+      ]
+    ],
+    [
+      [
+        "Dataset",
+        "Benign",
+        "Malicious",
+        "Total"
+      ],
+      [
+        "Training Set",
+        "719",
+        "240",
+        "959"
+      ],
+      [
+        "Testing Set",
+        "180",
+        "60",
+        "240"
+      ],
+      [
+        "Total",
+        "899",
+        "300",
+        "1,199"
+      ]
+    ],
+    [
+      [
+        "Category",
+        "Features"
+      ],
+      [
+        "Lexical",
+        "url_length, host_length, domain_length, path_length, query_length, num_dots, num_digits, num_hyphens, num_special_chars, num_query_params, entropy, subdomain_count, path_depth"
+      ],
+      [
+        "Security indicators",
+        "has_https, has_ip_address, has_punycode, has_executable_path, has_suspicious_tld, has_suspicious_keyword"
+      ],
+      [
+        "Trust-based",
+        "is_known_trusted_domain"
+      ],
+      [
+        "Brand impersonation",
+        "has_brand_keyword, has_brand_mismatch"
+      ]
+    ],
+    [
+      [
+        "Model",
+        "Accuracy",
+        "Precision",
+        "Recall",
+        "F1-score",
+        "ROC-AUC",
+        "FP",
+        "FN"
+      ],
+      [
+        "Gradient Boosting",
+        "99.17%",
+        "98.33%",
+        "98.33%",
+        "98.33%",
+        "99.53%",
+        "1",
+        "1"
+      ],
+      [
+        "Random Forest",
+        "98.75%",
+        "96.72%",
+        "98.33%",
+        "97.52%",
+        "98.96%",
+        "2",
+        "1"
+      ],
+      [
+        "SVM (RBF)",
+        "97.92%",
+        "93.65%",
+        "98.33%",
+        "95.93%",
+        "97.56%",
+        "4",
+        "1"
+      ],
+      [
+        "Logistic Regression",
+        "97.50%",
+        "92.19%",
+        "98.33%",
+        "95.16%",
+        "99.22%",
+        "5",
+        "1"
+      ]
+    ],
+    [
+      [
+        "Risk Level",
+        "Condition",
+        "Response"
+      ],
+      [
+        "Low",
+        "Benign prediction",
+        "Allow navigation"
+      ],
+      [
+        "Medium",
+        "Malicious prediction with confidence >= 0.70",
+        "Display caution notification"
+      ],
+      [
+        "High",
+        "Malicious prediction with confidence >= 0.90 and supporting evidence",
+        "Display warning/block page"
+      ]
+    ],
+    [
+      [
+        "Feature",
+        "Importance"
+      ],
+      [
+        "host_length",
+        "0.289326"
+      ],
+      [
+        "is_known_trusted_domain",
+        "0.213397"
+      ],
+      [
+        "url_length",
+        "0.141202"
+      ],
+      [
+        "num_digits",
+        "0.126017"
+      ],
+      [
+        "num_dots",
+        "0.093210"
+      ]
+    ],
+    [
+      [
+        "Metric",
+        "Result"
+      ],
+      [
+        "Main benign false positive rate",
+        "0.00%"
+      ],
+      [
+        "Main malicious recall",
+        "96.67%"
+      ],
+      [
+        "Main malicious precision",
+        "100.00%"
+      ],
+      [
+        "Hard-negative URLs tested",
+        "42"
+      ],
+      [
+        "Hard-negative false positive rate",
+        "0.00%"
+      ],
+      [
+        "Software verification tests",
+        "25 / 25 tests passed"
+      ]
+    ]
+  ],
+  "core": {
+    "title": "Title Goes Here",
+    "author": "Ruth Levins",
+    "last_modified_by": "CHONG YOU XIN",
+    "created": "2023-09-01 14:34:00+00:00",
+    "modified": "2026-06-17 17:41:00+00:00"
+  }
+}

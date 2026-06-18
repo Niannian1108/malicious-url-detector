@@ -41,6 +41,7 @@ BACKEND_DIR = os.path.dirname(SRC_DIR)
 if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
 
+# Local modules -- imported after sys.path update so Python can find them in src.
 from feature_extractor import extract_features  # noqa: E402
 from logger_db import init_db, log_event        # noqa: E402
 from reputation_checker import check_reputation  # noqa: E402
@@ -80,7 +81,7 @@ def load_model(model_path: str) -> dict:
 
     artefact = joblib.load(model_path)
 
-    # Basic sanity check -- make sure the expected keys are present.
+    # Basic sanity check to make sure the expected keys are present.
     if "model" not in artefact or "features" not in artefact:
         raise RuntimeError(
             "Unexpected model artefact format. "
@@ -90,8 +91,8 @@ def load_model(model_path: str) -> dict:
     return artefact
 
 
-# Load once when the module is imported (i.e. at server startup).
-# Any error here is intentional -- you want the server to crash loudly
+# Load once when the module is imported (ie. at server startup).
+# Any error here is intentional you want the server to crash loudly
 # rather than serve silently wrong predictions.
 artefact = load_model(MODEL_PATH)
 clf        = artefact["model"]                   # trained sklearn estimator
