@@ -1,9 +1,11 @@
-# Malicious URL Detector
+# Machine Learning Based Malicious Website Detection and Response System
 
-Malicious URL Detector is a local phishing and suspicious-URL detection prototype made of:
+A local phishing and suspicious-URL detection prototype consisting of:
 
-- A Python backend that extracts lexical, trust-aware, and brand-mismatch URL features and classifies URLs with a trained Gradient Boosting model.
-- A Chrome extension that checks visited URLs against the local backend, applies lightweight page-signal heuristics, and warns or blocks suspicious destinations.
+- A **Python backend** that extracts lexical, trust-aware, and brand-mismatch URL features and classifies URLs with a trained Gradient Boosting model served via FastAPI.
+- A **Chrome extension** (Manifest V3) that checks every top-level navigation against the local backend, applies lightweight DOM-signal heuristics after the page loads, and warns or blocks suspicious destinations.
+
+---
 
 ## Project Structure
 
@@ -11,30 +13,72 @@ Malicious URL Detector is a local phishing and suspicious-URL detection prototyp
 malicious-url-detector/
 ├─ backend/
 │  ├─ data/
-│  │  ├─ external/   # downloaded source feeds and legacy sample data
-│  │  └─ raw/        # model-ready CSV files used for training
-│  ├─ logs/          # SQLite prediction logs
-│  ├─ models/        # trained model artifacts
-│  └─ src/           # backend, training, feature extraction, updater
-├─ extension/        # Chrome extension
+│  │  ├─ evaluation/   # held-out evaluation sets (excluded from training)
+│  │  ├─ external/     # downloaded source feeds and dataset manifest
+│  │  ├─ raw/          # model-ready CSV files used for training
+│  │  └─ updates/      # drop new CSVs here for auto-retraining via updater.py
+│  ├─ logs/            # SQLite prediction log (events.db)
+│  ├─ models/          # trained model artifact (model_v1.joblib)
+│  ├─ reports/         # model comparison and threshold analysis artifacts
+│  └─ src/
+│     ├─ api_server.py          # FastAPI application
+│     ├─ feature_extractor.py   # URL feature extraction
+│     ├─ logger_db.py           # SQLite prediction logger
+│     ├─ reputation_checker.py  # optional VirusTotal integration
+│     ├─ train_model.py         # model training script
+│     ├─ evaluate_model.py      # false-positive evaluation script
+│     ├─ model_comparison.py    # baseline model comparison script
+│     └─ updater.py             # file-watcher auto-retraining script
+├─ extension/
+│  ├─ background.js      # service worker: navigation interception and risk logic
+│  ├─ dom_inspector.js   # content script: DOM signal collection after page load
+│  ├─ blocked.html / .js # built-in high-risk warning/block page
+│  ├─ popup.html / .js   # extension toolbar popup
+│  └─ manifest.json      # Manifest V3 extension descriptor
+├─ tests/
+│  ├─ test_api_server.py        # API response and risk-level behavior tests
+│  ├─ test_feature_extractor.py # feature extraction unit tests
+│  └─ test_reputation_checker.py
+├─ tools/                # helper and report-generation scripts
 ├─ requirements.txt
 └─ README.md
 ```
 
-## What It Does
+---
 
-1. The browser extension listens for top-level page navigations.
+## How It Works
+
+1. The Chrome extension intercepts every top-level page navigation.
 2. It sends the target URL to the local FastAPI backend at `http://127.0.0.1:8000/predict`.
-3. The backend extracts numerical URL features and runs a saved machine-learning model.
-4. After the page loads, the extension can send lightweight DOM signals such as password fields, hidden iframes, external scripts, suspicious page text, and simple brand/domain mismatch cues.
-5. The backend returns a prediction, confidence score, risk level, and short explanation reasons.
-6. If the destination is high risk, the extension sends the tab to a built-in warning page. Medium-risk results trigger a caution notification. Low-risk results are allowed.
-7. The backend logs prediction events to SQLite.
+3. The backend extracts 22 numerical URL features and runs the trained Gradient Boosting classifier.
+4. After the page loads, the extension's content script (`dom_inspector.js`) collects lightweight DOM signals — password fields, hidden iframes, external script count, suspicious page text, and brand/domain mismatch cues — and sends them to the backend for a second-pass confidence adjustment.
+5. The backend returns a `prediction`, `confidence` score, `risk_level`, and short `reasons` list.
+6. The extension acts on the risk level:
+   - **`low`** — allow normally.
+   - **`medium`** — show a caution notification.
+   - **`high`** — redirect the tab to the built-in warning page and block by default.
+7. Every prediction event is logged to a local SQLite database (`backend/logs/events.db`).
+
+---
 
 ## Requirements
 
-- Python 3.12
-- Google Chrome or another Chromium browser that supports Manifest V3 extensions
+| Dependency | Version |
+|---|---|
+| Python | 3.12 |
+| fastapi | 0.115.6 |
+| uvicorn[standard] | 0.32.1 |
+| scikit-learn | 1.5.2 |
+| pandas | 2.2.3 |
+| numpy | 2.1.3 |
+| joblib | 1.4.2 |
+| tldextract | 5.1.3 |
+| watchdog | 6.0.0 |
+| sqlalchemy | 2.0.36 |
+
+Browser: Google Chrome or any Chromium browser that supports Manifest V3 extensions.
+
+---
 
 ## Setup
 
@@ -46,265 +90,338 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+---
+
 ## Train the Model
 
-The training script reads every CSV in `backend/data/raw/`. Each CSV must contain:
+The training script reads every CSV under `backend/data/raw/`. Each CSV must contain:
 
-- `url`
-- `label` where `0 = benign` and `1 = malicious`
+| Column | Description |
+|---|---|
+| `url` | The raw URL string |
+| `label` | `0` = benign, `1` = malicious |
 
-Train the model with:
+> **Note**: Only training-time benign examples should be placed in `backend/data/raw/`. Held-out evaluation data lives separately under `backend/data/evaluation/` and is never used for training.
+
+Run training with:
 
 ```powershell
 python backend\src\train_model.py
 ```
 
-Because the training script reads every CSV in `backend/data/raw/`, only hard-negative benign examples intended for training should be placed there. Held-out evaluation data is stored separately under `backend/data/evaluation/`.
-
 This will:
 
-- load the training data
-- extract URL features including lexical, trust, and brand/domain consistency signals
-- split the data into train/test sets
-- train the selected deployed model
-- print evaluation metrics on a hold-out split
-- refit the deployed model on the full dataset
-- save the model to `backend/models/model_v1.joblib`
+1. Load all CSVs from `backend/data/raw/`
+2. Extract 22 URL features (lexical, structural, trust-aware, and brand/domain consistency signals)
+3. Split data into train/test sets and print hold-out evaluation metrics
+4. Refit the deployed model on the full dataset
+5. Save the trained artifact to `backend/models/model_v1.joblib`
+
+---
 
 ## Run the Backend API
-
-From the project root:
 
 ```powershell
 uvicorn backend.src.api_server:app --reload
 ```
 
-The API will be available at:
+The API is available at:
 
-- `http://127.0.0.1:8000/`
-- `http://127.0.0.1:8000/docs`
+- `http://127.0.0.1:8000/` — health check (returns model name, feature count, and reputation status)
+- `http://127.0.0.1:8000/docs` — interactive Swagger UI
+- `http://127.0.0.1:8000/predict` — `POST` endpoint for URL classification
 
-### Optional VirusTotal Reputation Check
+### API Schema
 
-The backend can use VirusTotal as a second opinion for medium- and high-risk local predictions. This is optional and disabled by default.
+**Request** (`POST /predict`):
 
-To enable it, set an API key before starting the backend:
+```json
+{
+  "url": "http://example.com",
+  "dom_signals": {
+    "form_count": 0,
+    "password_field_count": 0,
+    "hidden_iframe_count": 0,
+    "external_script_count": 0,
+    "suspicious_text_hit_count": 0,
+    "page_brand_mismatch": 0
+  }
+}
+```
+
+`dom_signals` is optional. When omitted, all DOM signal values default to `0`.
+
+**Response**:
+
+```json
+{
+  "prediction": 1,
+  "confidence": 0.9312,
+  "risk_level": "high",
+  "reasons": [
+    "The URL mentions a trusted brand on a non-brand domain.",
+    "The domain uses a higher-risk top-level domain.",
+    "The combined risk score is high enough to justify blocking."
+  ],
+  "reputation": { "..." : "..." }
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `prediction` | `int` | `0` = benign, `1` = malicious |
+| `confidence` | `float` | Combined risk score in `[0, 1]`, after DOM signal adjustment |
+| `risk_level` | `str` | `"low"`, `"medium"`, or `"high"` |
+| `reasons` | `list[str]` | Up to 4 short explanation bullets |
+| `reputation` | `dict` | VirusTotal result if enabled, otherwise `null` |
+
+---
+
+## Optional: VirusTotal Reputation Check
+
+The backend can query VirusTotal as a second opinion for medium- and high-risk local predictions. This feature is **disabled by default**.
+
+To enable it, set the API key before starting the backend:
 
 ```powershell
 $env:VIRUSTOTAL_API_KEY="your_api_key_here"
 uvicorn backend.src.api_server:app --reload
 ```
 
-The implementation checks existing VirusTotal URL reports and caches results in `backend/logs/reputation_cache.db`. It does not submit every visited URL for scanning. For privacy and rate-limit reasons, reputation lookup is only used when the local detector already considers a URL suspicious.
+- Reputation lookup is only triggered when the local classifier already considers a URL suspicious (medium or high risk), to protect privacy and respect rate limits.
+- Results are cached in `backend/logs/reputation_cache.db` to avoid duplicate queries.
+- The implementation checks existing VirusTotal URL reports; it does **not** submit every visited URL for new scans.
+
+---
 
 ## Load the Chrome Extension
 
 1. Open Chrome and go to `chrome://extensions/`
-2. Enable `Developer mode`
-3. Click `Load unpacked`
-4. Select the `extension` folder:
+2. Enable **Developer mode**
+3. Click **Load unpacked**
+4. Select the `extension` folder in this project
+5. Ensure the backend is running before browsing
 
-   `C:\Users\Chong You Xin\Desktop\malicious-url-detector\extension`
-
-5. Make sure the backend is running before browsing
+---
 
 ## Typical Local Workflow
 
 ```powershell
+# 1. Activate the virtual environment
 .venv\Scripts\Activate.ps1
+
+# 2. Train the model (first time, or after adding new data)
 python backend\src\train_model.py
+
+# 3. Start the API server
 uvicorn backend.src.api_server:app --reload
 ```
 
-Then load the unpacked extension and browse normally.
+Then load the unpacked extension in Chrome and browse normally.
 
-## Warning And Caution Behavior
+---
 
-High-confidence blocks will open a built-in warning page that shows:
+## Warning and Caution Behavior
 
-- the blocked URL
-- the model confidence score
-- the current risk level
-- short explanation reasons
-- a `Go Back` action
-- a `Proceed Anyway` action that allows a one-time override for that tab
+The current extension uses three severity bands:
 
-The current extension flow uses three severity bands:
+| Risk Level | Action |
+|---|---|
+| `low` | Allow — no notification |
+| `medium` | Show a Chrome caution notification |
+| `high` | Redirect tab to the built-in warning/block page |
 
-- `low` risk: allow
-- `medium` risk: show a caution notification
-- `high` risk: open the warning page and block by default
+**Current thresholds:**
+- High-risk block: `confidence >= 0.90` **and** strong URL evidence (brand mismatch, suspicious TLD, IP address, executable path, or punycode)
+- Medium-risk caution: `confidence >= 0.70`
 
-## Data Currently Included
+These thresholds were selected during threshold analysis to maintain **0% false-positive rate** on held-out hard-negative benign examples while preserving **93.33% malicious recall**.
 
-The current model-ready dataset is:
+**DOM signal treatment:** DOM signals such as hidden iframes are treated as supporting evidence only. They can raise a result to `medium`, but they do not trigger a `high`-risk block unless stronger URL evidence or external reputation evidence also supports it.
 
-- `backend/data/raw/internet_urls.csv`
-- `backend/data/raw/official_hard_negatives_train.csv`
-- `backend/data/evaluation/official_hard_negatives_eval.csv`
+**The warning page shows:**
 
-The source manifest is stored in:
+- The blocked URL
+- The model confidence score
+- The current risk level
+- Short explanation reasons
+- **Go Back** — returns to the previous tab
+- **Proceed Anyway** — one-time override for that tab
 
-- `backend/data/external/dataset_manifest.json`
+---
 
-The downloaded source files are stored in:
+## URL Feature Set
 
-- `backend/data/external/openphish_feed.txt`
-- `backend/data/external/tranco_top_1m.csv`
-- `backend/data/external/sample_urls_legacy.csv`
+The `feature_extractor.py` module extracts 22 numerical features from every URL:
 
-### Current Dataset Shape
+| Category | Feature | Description |
+|---|---|---|
+| **Lexical** | `url_length` | Total URL character length |
+| | `host_length` | Hostname character length |
+| | `domain_length` | Registered domain + TLD length |
+| | `path_length` | Path component length |
+| | `query_length` | Query string length |
+| | `num_dots` | Number of `.` characters in the full URL |
+| | `num_digits` | Number of digit characters in the full URL |
+| | `num_hyphens` | Number of `-` characters |
+| | `num_special_chars` | Count of `-_?=&@%#!` characters |
+| | `num_query_params` | Number of `&`-separated query parameters |
+| | `has_https` | `1` if scheme is HTTPS, else `0` |
+| | `entropy` | Shannon entropy of the full URL string |
+| | `path_depth` | Number of non-empty path segments |
+| **Structural** | `subdomain_count` | Number of subdomain labels |
+| | `has_ip_address` | `1` if host is a bare IPv4 address |
+| | `has_punycode` | `1` if hostname contains `xn--` labels |
+| | `has_executable_path` | `1` if path ends with a risky extension (`.php`, `.exe`, `.zip`, etc.) |
+| | `has_suspicious_tld` | `1` if TLD is in the hand-curated high-risk list |
+| **Trust-aware** | `is_known_trusted_domain` | `1` if host belongs to a monitored trusted vendor |
+| **Brand/Domain** | `has_brand_keyword` | `1` if a monitored brand token appears anywhere in the URL |
+| | `has_brand_mismatch` | `1` if a brand token appears but the host is not brand-owned |
+| **Keyword** | `has_suspicious_keyword` | `1` if a phishing-oriented keyword appears in the URL |
 
-As of June 18, 2026, the combined model-development training/evaluation set contains:
+---
 
-- 878 benign URLs
-- 300 malicious URLs
+## Dataset
 
-There is also a separate held-out hard-negative evaluation set containing 21 benign URLs excluded from training. This set is kept separate so that the false-positive rate on legitimate but suspicious looking pages is measured on URLs the model has never seen during training, giving an unbiased estimate of real-world performance.
+### Training Data
 
-There are also dedicated hard-negative benign files:
+| File | Contents |
+|---|---|
+| `backend/data/raw/internet_urls.csv` | Mixed benign and malicious URLs |
+| `backend/data/raw/official_hard_negatives_train.csv` | Phishy-looking but legitimate URLs (hard negatives for training) |
 
-- `backend/data/raw/official_hard_negatives_train.csv`
-- `backend/data/evaluation/official_hard_negatives_eval.csv`
+### Evaluation Data
 
-These files contain official, legitimate URLs from sign-in, security, verification, account recovery, and support pages on trusted domains such as Google, GitHub, Microsoft, Apple, PayPal, Dropbox, Adobe, AWS, Atlassian, and Amazon Pay. These are "phishy-looking" but safe, which makes them useful for reducing false positives. The evaluation file is excluded from training so false-positive results are measured on held-out URLs.
+| File | Contents |
+|---|---|
+| `backend/data/evaluation/official_hard_negatives_eval.csv` | 21 held-out benign URLs excluded from training |
 
-Benign URLs come from legitimate, traceable sources:
+### Dataset Shape (as of June 18, 2026)
 
-- Tranco top sites list for trusted domain breadth: [tranco-list.eu](https://tranco-list.eu/)
-- Official Python documentation sitemap: [docs.python.org/sitemap.xml](https://docs.python.org/sitemap.xml)
-- Official MDN sitemap endpoint: [developer.mozilla.org/sitemap.xml](https://developer.mozilla.org/sitemap.xml)
-- Official Microsoft sitemap indexes exposed in `robots.txt`
-- Official Apple sitemap feeds exposed in `robots.txt`
+| Split | Benign | Malicious |
+|---|---|---|
+| Training + evaluation combined | 878 | 300 |
+| Held-out hard-negative evaluation | 21 | 0 |
 
-Malicious URLs come from:
+Hard-negative benign examples come from official sign-in, security, verification, account-recovery, and support pages on trusted domains: Google, GitHub, Microsoft, Apple, PayPal, Dropbox, Adobe, AWS, Atlassian, and Amazon Pay. They are intentionally "phishy-looking" to stress-test the false-positive rate.
 
-- OpenPhish community feed: [openphish.com/feed.txt](https://openphish.com/feed.txt)
+### Data Sources
 
-This is more realistic than the earlier dataset because the benign side now contains real documentation, product, retail, AI, security, and newsroom URLs instead of only homepage-style domains.
+| Source | Use |
+|---|---|
+| [OpenPhish community feed](https://openphish.com/feed.txt) | Malicious URLs |
+| [Tranco top-1M list](https://tranco-list.eu/) | Benign: trusted domain breadth |
+| `docs.python.org/sitemap.xml` | Benign: real documentation URLs |
+| `developer.mozilla.org/sitemap.xml` | Benign: real documentation URLs |
+| Microsoft and Apple `robots.txt` sitemaps | Benign: real product and support URLs |
+| Official hard-negative vendor pages | Benign: phishy-looking but legitimate pages |
 
-## Notes on Data Sources
+---
 
-- OpenPhish provides a public phishing feed that is useful for near-real-time malicious URLs.
-- Tranco provides a research-oriented ranking of popular domains and is a practical benign-domain source.
-- Official sitemap feeds from trusted sites provide real benign page URLs with more realistic paths and structures.
-- Official help, sign-in, support, and account-management pages from trusted vendors are used as hard-negative benign examples.
-- PhishTank is also a strong source, but anonymous bulk downloads may be rate-limited unless you use an application key.
+## Model Performance
 
-## Auto-Updating Data
+Gradient Boosting was selected after comparing four baseline classifiers. Results on a hold-out test split:
 
-The project includes `backend/src/updater.py`, which watches `backend/data/updates/` for new CSV files and retrains the model automatically.
+| Model | Accuracy | Precision (Malicious) | Recall (Malicious) | F1 (Malicious) | ROC-AUC |
+|---|---|---|---|---|---|
+| **Gradient Boosting** | 0.9831 | 0.9828 | 0.9500 | 0.9661 | 0.9924 |
+| Random Forest | 0.9831 | 0.9828 | 0.9500 | 0.9661 | 0.9871 |
+| SVM (RBF) | 0.9703 | 0.9344 | 0.9500 | 0.9421 | 0.9718 |
+| Logistic Regression | 0.9619 | 0.9180 | 0.9333 | 0.9256 | 0.9871 |
 
-Run it with:
+**Held-out hard-negative benign false-positive rate at threshold 0.90:**
 
-```powershell
-python backend\src\updater.py
-```
+| Model | FP Count | FP Rate | Max Benign Confidence |
+|---|---|---|---|
+| **Gradient Boosting** | 0 | 0.00% | 0.0051 |
+| Random Forest | 0 | 0.00% | 0.2250 |
+| Logistic Regression | 0 | 0.00% | 0.2736 |
+| SVM (RBF) | 0 | 0.00% | 0.6757 |
 
-Any CSV dropped into `backend/data/updates/` should match the expected schema:
+Gradient Boosting was chosen because it achieves the lowest maximum benign confidence score on hard-negative examples (`0.0051`), giving the most headroom below the blocking threshold.
 
-- `url`
-- `label`
+Detailed comparison reports are in `backend/reports/`:
 
-## Evaluate False Positives
+| File | Contents |
+|---|---|
+| `model_comparison_main.csv` | Per-model metrics on the main hold-out split |
+| `model_comparison_hard_negative.csv` | Per-model false-positive rates on held-out hard negatives |
+| `deployed_model_threshold_analysis.csv` | Threshold sweep for the deployed Gradient Boosting model |
+| `model_confusion_matrices.json` | Confusion matrices for all models |
+| `model_comparison_summary.md` | Narrative summary with recommendation |
+| `architecture_refinement.md` | Architecture notes and refinement history |
 
-Use the evaluation script to measure the current model on labeled CSVs with a focus on false positives:
-
-```powershell
-python backend\src\evaluate_model.py
-```
-
-By default, this evaluates:
-
-- `backend/data/evaluation/official_hard_negatives_eval.csv`
-
-You can also evaluate any labeled CSV:
-
-```powershell
-python backend\src\evaluate_model.py --csv backend\data\raw\internet_urls.csv
-```
-
-The script reports:
-
-- classification metrics
-- confusion matrix
-- false-positive rate on benign URLs
-- threshold sweep for benign false positives and malicious recall
-- highest-confidence false positives
+---
 
 ## Compare Models
 
-Use the comparison script to train and compare the main baseline models for the FYP 2 report:
+To regenerate the comparison reports:
 
 ```powershell
 python backend\src\model_comparison.py
 ```
 
-This writes report-ready artifacts to:
+---
 
-- `backend/reports/model_comparison_main.csv`
-- `backend/reports/model_comparison_hard_negative.csv`
-- `backend/reports/deployed_model_threshold_analysis.csv`
-- `backend/reports/model_confusion_matrices.json`
-- `backend/reports/model_comparison_summary.md`
-- `backend/reports/architecture_refinement.md`
+## Evaluate False Positives
 
-## Current Detection Strategy
+Measure the current model on labeled CSVs with a focus on the false-positive rate:
 
-The current detector now combines:
+```powershell
+# Default: evaluate on the held-out hard-negative evaluation set
+python backend\src\evaluate_model.py
 
-- lexical structure signals such as URL length, dots, digits, hyphens, entropy, query size, and path depth
-- suspicious structure signals such as punycode, risky TLDs, executable/script paths, and IP-host usage
-- trust-aware signals such as known trusted domains
-- brand/domain consistency signals that distinguish legitimate brand-owned URLs from lookalike phishing domains
-- lightweight page heuristics such as password fields, hidden iframes, suspicious page text, external script count, and simple brand/domain mismatch cues collected by the extension after load
-- optional reputation signals from VirusTotal when `VIRUSTOTAL_API_KEY` is configured
+# Evaluate on a custom labeled CSV
+python backend\src\evaluate_model.py --csv backend\data\raw\internet_urls.csv
+```
 
-The current deployed model is **Gradient Boosting**, selected after model comparison because it outperformed the other tested baselines while keeping held-out hard-negative benign false positives at `0%`.
+The script reports:
 
-The Chrome extension currently uses:
+- Classification metrics (accuracy, precision, recall, F1, ROC-AUC)
+- Confusion matrix
+- False-positive rate on benign URLs
+- Threshold sweep showing benign FP rate and malicious recall at each threshold
+- Highest-confidence false positives
 
-- a `high` risk threshold of `0.90` for blocking
-- a `medium` risk threshold of `0.70` for caution warnings
+---
 
-These thresholds were chosen to preserve `0%` held-out hard-negative benign false positives while maintaining strong malicious recall during threshold analysis.
+## Auto-Updating Data
 
-Common DOM signals such as hidden iframes are treated as supporting evidence only. They can raise a result to caution, but they do not create a high-risk block by themselves unless stronger URL evidence or external reputation evidence also supports the decision.
+`backend/src/updater.py` watches `backend/data/updates/` and automatically retrains the model when a new CSV is dropped in:
+
+```powershell
+python backend\src\updater.py
+```
+
+Any CSV placed in `backend/data/updates/` must follow the expected schema:
+
+| Column | Description |
+|---|---|
+| `url` | Raw URL string |
+| `label` | `0` = benign, `1` = malicious |
+
+---
 
 ## Run Tests
-
-Run the lightweight regression tests with:
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-The test suite covers:
+| Test file | Coverage |
+|---|---|
+| `test_feature_extractor.py` | Feature extraction correctness for various URL types |
+| `test_api_server.py` | API response stability, risk-level behavior, hard-negative benign URLs, malicious brand-mismatch and risky-structure URLs |
+| `test_reputation_checker.py` | Reputation checker behavior (enabled/disabled/cached) |
 
-- feature extraction behavior
-- API response stability
-- risk-level response behavior
-- official benign URLs that look suspicious
-- malicious brand-mismatch and risky-structure URLs
+---
 
 ## Logs and Artifacts
 
-- Model file: `backend/models/model_v1.joblib`
-- Prediction log database: `backend/logs/events.db`
+| Path | Description |
+|---|---|
+| `backend/models/model_v1.joblib` | Trained model artifact (sklearn estimator + ordered feature list) |
+| `backend/logs/events.db` | SQLite prediction log (`id`, `timestamp`, `url`, `prediction`, `confidence`) |
+| `backend/logs/reputation_cache.db` | VirusTotal result cache (only created when key is configured) |
 
-## Known Limitations
-
-- The system is still mostly URL-centric. It now adds lightweight DOM heuristics and optional VirusTotal reputation checks, but it does not perform deep page-content classification, live redirect tracing, certificate analysis, or screenshot-based inspection.
-- Reputation checks may send suspicious URLs to VirusTotal when enabled, so this feature should be disclosed clearly in privacy or limitation discussions.
-- Even with trust-aware and brand/domain features, the model can still produce false positives or miss attacks that look benign lexically.
-- The extension depends on the local backend being up.
-- The warning page is safer than `about:blank`, but the model can still be wrong and users may need to override false positives.
-- Full URLs are stored in the local SQLite log, which has privacy implications.
-
-## Future Improvements
-
-- Add tests for feature extraction, training, and API behavior
-- Track dataset versions and refresh dates more formally
-- Add a scripted data refresh flow for OpenPhish, Tranco, and optionally PhishTank
-- Expand the lightweight page-signal layer and validate it against more real-world phishing and hard-negative benign pages
-- Add richer non-lexical signals such as redirects and certificate cues
+---
